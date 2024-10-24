@@ -1,38 +1,145 @@
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+body {
+  background: linear-gradient(to left, rgb(35, 44, 55), white);
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100%;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.form-box {
+  width: 380px;
+  background-color: black;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  opacity: 0.9;
+  border-radius: 8px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.header-form {
+  margin-bottom: 15px;
+}
+
+button {
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.message {
+  display: flex;
+  justify-content: space-between;
+  color: white;
+}
+
+.message a {
+  color: white;  
+  text-decoration: none; 
+}
+
+.message a:hover {
+  text-decoration: underline; 
+}
+
+.social {
+  display: flex;
+  justify-content: space-around;
+  padding: 20px 0;
+}
+
+.social i {
+  font-size: 35px;
+}
+
+.social i:hover {
+  color: red;
+  cursor: pointer;
+}
+
+.input-group-prepend .input-group-text {
+  background-color: #555;
+  color: white;
+}
+
+.form-control {
+  background-color: #333;
+  color: white;
+  border: 1px solid #555;
+  padding: 10px;
+}
+
+.form-control:focus {
+  background-color: #222;
+  color: white;
+  border-color: #999;
+  box-shadow: none;
+}
+
+/* Position logout button in top right */
+.logout-button-container {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.logout-button {
+  background-color: transparent;
+  color: white;
+  border: 2px solid white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.logout-button:hover {
+  background-color: white;
+  color: black;
+}
+
+/* Dashboard styling */
+.dashboard-box {
+  width: 90%; /* Increased the width to 90% */
+  height: 75vh; /* Sets the height to 85% of the viewport height */
+  background-color: white;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  border-radius: 8px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  color: black;
+  opacity: 0.95;
+}
+
+.dashboard-header {
+  margin-bottom: 20px;
+}
+
+.dashboard-title {
+  font-size: 1.75rem;
+  color: black;
+}
+
+.dashboard-body {
+  font-size: 1.25rem;
+  color: black;
+}
+
+/* Container styling */
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100%;
 }
