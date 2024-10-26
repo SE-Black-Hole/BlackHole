@@ -9,7 +9,7 @@ class DataManager:
 	def __init__(self):
 		print('Connecting to database...')
 		client = pymongo.MongoClient(config.mongo_url, config.mongo_port)
-		self.db = client['CS3354_Project_Group4']
+		self.db = client[config.db_name]
 		
 	def get_all_classes(self):
 		results = []
