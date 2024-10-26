@@ -1,0 +1,5 @@
+Steps to run test program:
+- open up the command line / Powershell
+- install python packages by typing in "pip install -r requirements.txt" in command line
+- type in "python data_manager_test.py" in command line
+- will need to wait a few seconds to connect to database
