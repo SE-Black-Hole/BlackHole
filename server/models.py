@@ -8,5 +8,6 @@ class Course(BaseModel):
 	className: str
 	major: str
 	prerequisites: List[str] = []
+	corequisites: List[str] = []
 	isMajorElective: bool = False
 	
