@@ -36,7 +36,7 @@ const Login = ({ onLogin }) => {
             <h1 className="text-white text-2xl md:text-3xl font-bold text-center">
               {' '}
               {/* Increased text size */}
-              Automatic Degree Planner
+              Black Hole
             </h1>
           </div>
 
