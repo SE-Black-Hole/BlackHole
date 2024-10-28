@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import '../styles/App.css';
 import CurrentDegreePlanPage from './CurrentDegreePlanPage';
 import ManageClassesPage from './ManageClassesPage'; // Import the new page
-
+import SearchClassesPage from './SearchClassesPage';
 function App() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -62,6 +62,9 @@ function App() {
                       <Link to="/manage-classes">
                         <button className="btn btn-secondary">Manage Classes</button>
                       </Link>
+                      <Link to="/search-classes">
+                        <button className="btn btn-secondary">Search Classes</button>
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -69,6 +72,7 @@ function App() {
             />
             <Route path="/current-degree-plan" element={<CurrentDegreePlanPage handleLogout={handleLogout} />} />
             <Route path="/manage-classes" element={<ManageClassesPage handleLogout={handleLogout} />} />
+            <Route path="/search-classes" element={<SearchClassesPage />} />
           </Routes>
         ) : (
           <div className="container">
