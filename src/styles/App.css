@@ -1,3 +1,4 @@
+/* Background and Body */
 body {
   background: linear-gradient(to left, rgb(35, 44, 55), white);
   margin: 0;
@@ -5,6 +6,99 @@ body {
   box-sizing: border-box;
   color: white;
 }
+
+/* Main Container for Sidebar and Content */
+.degree-plan-container {
+  display: flex;
+  height: 100vh;
+  color: black;
+}
+
+/* Sidebar styling */
+.sidebar {
+  width: 250px;
+  background-color: #f5f7fa; /* Light gray background */
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  color: #333; /* Dark text color for readability */
+}
+
+.sidebar-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.sidebar-menu {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-menu li {
+  margin: 15px 0;
+  cursor: pointer;
+  font-weight: 500;
+  color: #555;
+}
+
+.sidebar-menu li:hover {
+  color: #333;
+}
+
+.sidebar-settings {
+  margin-top: auto;
+}
+
+.sidebar-settings a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.sidebar-settings a:hover {
+  text-decoration: underline;
+}
+
+/* Main Content Area */
+.content {
+  flex: 1;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  overflow-y: auto;
+}
+
+.content-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Table styling */
+.degree-table {
+  width: 90%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  color: black;
+}
+
+.degree-table th, .degree-table td {
+  padding: 12px 20px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.degree-table th {
+  background-color: #e0e0e0; /* Light gray for header background */
+  font-weight: bold;
+  color: #333;
+}
+
+/* Existing Styles */
 
 .container {
   display: flex;
@@ -84,7 +178,6 @@ button {
   box-shadow: none;
 }
 
-/* Position logout button in top right */
 .logout-button-container {
   position: absolute;
   top: 20px;
@@ -106,10 +199,9 @@ button {
   color: black;
 }
 
-/* Dashboard styling */
 .dashboard-box {
-  width: 90%; /* Increased the width to 90% */
-  height: 75vh; /* Sets the height to 85% of the viewport height */
+  width: 90%;
+  height: 75vh;
   background-color: white;
   padding: 30px;
   display: flex;
@@ -134,12 +226,91 @@ button {
   font-size: 1.25rem;
   color: black;
 }
+.logout-button-container {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
 
-/* Container styling */
-.container {
+.logout-button {
+  background-color: transparent;
+  color: white;
+  border: 2px solid white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.logout-button:hover {
+  background-color: white;
+  color: black;
+}
+
+.button-container {
+  position: absolute;
+  top: 20px;
+  right: 20px;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  width: 100%;
+  gap: 10px;
+}
+
+.back-button,
+.logout-button {
+  background-color: transparent;
+  color: white;
+  border: 2px solid white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.back-button:hover,
+.logout-button:hover {
+  background-color: white;
+  color: black;
+}
+
+/* Common button styles */
+.btn {
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* Blue buttons for other actions */
+.btn-secondary {
+  background-color: #007bff;
+  color: white;
+  border: none;
+}
+
+.btn-secondary:hover {
+  background-color: #0056b3;
+}
+
+/* Specific styling for the Logout button */
+.logout-button {
+  background-color: transparent;
+  color: white;
+  border: 2px solid white;
+}
+
+.logout-button:hover {
+  background-color: white;
+  color: black;
+}
+
+
+.back-button {
+  background-color: transparent;
+  color: white;
+  border: 2px solid white;
+}
+
+.back-button:hover {
+  background-color: white;
+  color: black;
 }
