@@ -1,85 +1,86 @@
-// Sofia Deichert - Test Case 2
+// Sofia Deichert - Test Case 1
 
-// Test Case Description: User can view remaining courses in their CS degree plan
+// Test Case Description: User can view completed courses in their CS degree plan
 
-// This component implements a sortable table displaying remaining courses in a CS degree plan.
+// This component implements a sortable table displaying completed courses in a CS degree plan.
 
 // The table allows sorting by
 // 1) course name
 // 2) credit hours
-// 3) course level
+// 3) semester completed
 
 // The component includes sample data and maintains consistent styling with the app's dark theme.
 
 import { useState } from 'react';
 import { ChevronUp, ChevronDown } from 'lucide-react';
 
-const RemainingCourses = () => {
-  // Sample course data structure with course details
-  // Each course has a course number, name, credit hours, and level
+const CompletedCourses = () => {
+  // Sample data structure representing completed courses
+  // Each course has a course number, name, credit hours, and completion semester
   const initialCourses = [
     {
-      courseNumber: 'CS4341',
-      courseName: 'Digital Logic and Computer Design',
+      courseNumber: 'CS1200',
+      courseName: 'Intro to CS and SE',
       creditHours: 3,
-      courseLevel: 'Senior',
+      semesterCompleted: '2023 Fall',
     },
     {
-      courseNumber: 'CS4141',
-      courseName: 'Digital Systems Laboratory',
-      creditHours: 1,
-      courseLevel: 'Senior',
+      courseNumber: 'CS1436',
+      courseName: 'Program Fundamentals',
+      creditHours: 3,
+      semesterCompleted: '2023 Fall',
     },
     {
-      courseNumber: 'CS4347',
-      courseName: 'Database Systems',
+      courseNumber: 'CS1337',
+      courseName: 'Computer Science I',
       creditHours: 3,
-      courseLevel: 'Senior',
+      semesterCompleted: '2023 Fall',
     },
     {
-      courseNumber: 'CS4348',
-      courseName: 'Operating Systems Concepts',
+      courseNumber: 'CS2305',
+      courseName: 'Discrete Mathematics for Computing I',
       creditHours: 3,
-      courseLevel: 'Senior',
+      semesterCompleted: '2023 Fall',
     },
     {
-      courseNumber: 'CS4349',
-      courseName: 'Adv Algorithm Design & Analysis',
+      courseNumber: 'CS2340',
+      courseName: 'Computer Architecture',
       creditHours: 3,
-      courseLevel: 'Senior',
-    },
-    {
-      courseNumber: 'CS3377',
-      courseName: 'C/C++ Programming in a UNIX Environment',
-      creditHours: 3,
-      courseLevel: 'Junior',
+      semesterCompleted: '2024 Spring',
     },
     {
       courseNumber: 'MATH2414',
-      courseName: 'Integral Calculus',
+      courseName: 'Integral Calculus or Calculus II',
       creditHours: 4,
-      courseLevel: 'Sophomore',
+      semesterCompleted: '2024 Spring',
     },
   ];
 
-  // State for managing the course list and sorting configuration
+  // State management for courses data and sorting configuration
+  // courses: current state of the courses list
+  // sortConfig: tracks which column is being sorted and in what direction
   const [courses, setCourses] = useState(initialCourses);
   const [sortConfig, setSortConfig] = useState({
-    key: null, // Column to sort by
-    direction: 'ascending', // Sort direction
+    key: null,
+    direction: 'ascending',
   });
 
-  // Defines the order of course levels for proper sorting
-  // Freshman courses should appear before Senior courses when sorting
-  const levelOrder = {
-    Freshman: 1,
-    Sophomore: 2,
-    Junior: 3,
-    Senior: 4,
+  // Helper function to convert semester strings into sortable numeric values
+  // Format: "YYYY Season" -> YYYY * 10 + seasonValue
+  // seasonValue: Spring = 1, Summer = 2, Fall = 3
+  const parseSemester = (semesterString) => {
+    const [year, semester] = semesterString.split(' ');
+    const semesterValue = {
+      Spring: 1,
+      Summer: 2,
+      Fall: 3,
+    };
+    return parseInt(year) * 10 + semesterValue[semester];
   };
 
-  // Handles the sorting of courses when a column header is clicked
-  // Changes sort direction if same column is clicked twice
+  // Handles sorting when a column header is clicked
+  // key: the column to sort by (courseName, creditHours, or semesterCompleted)
+  // Updates sort direction if clicking the same column multiple times
   const handleSort = (key) => {
     let direction = 'ascending';
     if (sortConfig.key === key && sortConfig.direction === 'ascending') {
@@ -91,11 +92,13 @@ const RemainingCourses = () => {
       if (key === 'creditHours') {
         // Numeric sorting for credit hours
         return direction === 'ascending' ? a[key] - b[key] : b[key] - a[key];
-      } else if (key === 'courseLevel') {
-        // Custom sorting for course levels using levelOrder mapping
+      } else if (key === 'semesterCompleted') {
+        // Custom sorting for semesters using the parseSemester helper
+        const semesterA = parseSemester(a[key]);
+        const semesterB = parseSemester(b[key]);
         return direction === 'ascending'
-          ? levelOrder[a[key]] - levelOrder[b[key]]
-          : levelOrder[b[key]] - levelOrder[a[key]];
+          ? semesterA - semesterB
+          : semesterB - semesterA;
       } else {
         // String comparison for course names
         return direction === 'ascending'
@@ -108,9 +111,9 @@ const RemainingCourses = () => {
     setSortConfig({ key, direction });
   };
 
-  // Returns the appropriate sort icon based on column and sort state
-  // Shows up arrow on hover for unsorted columns
-  // Shows current sort direction for sorted column
+  // Renders the appropriate sort icon for each column header
+  // Shows empty up arrow on hover for unsorted columns
+  // Shows up/down arrow for the currently sorted column
   const getSortIcon = (columnName) => {
     if (sortConfig.key !== columnName) {
       return (
@@ -126,35 +129,43 @@ const RemainingCourses = () => {
     );
   };
 
-  // Main component render
-  // Creates a responsive table with sorting capabilities
+  // Component render method
   return (
+    // Root container with full height/width and gradient background
     <div className="min-h-screen w-full bg-gradient-to-br from-black via-gray-900 to-gray-800 p-8">
+      {/* Main content card with glass-like effect */}
       <div className="backdrop-blur-sm bg-white/10 rounded-lg shadow-2xl border border-gray-700 overflow-hidden">
-        {/* Header section with title */}
+        {/* Card header with gradient background */}
         <div className="bg-gradient-to-r from-black to-gray-800 px-8 py-6">
-          <h1 className="text-white text-2xl font-bold">Remaining Courses</h1>
+          <h1 className="text-white text-2xl font-bold">Completed Courses</h1>
         </div>
 
-        {/* Table container with overflow handling */}
+        {/* Table wrapper with padding and horizontal scroll capability */}
         <div className="p-6">
           <div className="overflow-x-auto">
+            {/* Full-width table for course data */}
             <table className="w-full">
-              {/* Table headers with sort functionality */}
+              {/* Table header section */}
               <thead>
+                {/* Header row with bottom border */}
                 <tr className="border-b border-gray-700">
+                  {/* Static course number column - no sorting */}
                   <th className="px-6 py-3 text-left text-sm font-medium text-gray-300">
                     Course Number
                   </th>
+                  {/* Sortable course name column with click handler and hover effects */}
                   <th
                     className="px-6 py-3 text-left text-sm font-medium text-gray-300 cursor-pointer group"
                     onClick={() => handleSort('courseName')}
                   >
+                    {/* Flex container for header text and sort icon */}
                     <div className="flex items-center space-x-1">
                       <span>Course Name</span>
+                      {/* Dynamic sort icon based on current sort state */}
                       {getSortIcon('courseName')}
                     </div>
                   </th>
+                  {/* Sortable credit hours column */}
                   <th
                     className="px-6 py-3 text-left text-sm font-medium text-gray-300 cursor-pointer group"
                     onClick={() => handleSort('creditHours')}
@@ -164,20 +175,24 @@ const RemainingCourses = () => {
                       {getSortIcon('creditHours')}
                     </div>
                   </th>
+                  {/* Sortable semester column */}
                   <th
                     className="px-6 py-3 text-left text-sm font-medium text-gray-300 cursor-pointer group"
-                    onClick={() => handleSort('courseLevel')}
+                    onClick={() => handleSort('semesterCompleted')}
                   >
                     <div className="flex items-center space-x-1">
-                      <span>Course Level</span>
-                      {getSortIcon('courseLevel')}
+                      <span>Semester of Completion</span>
+                      {getSortIcon('semesterCompleted')}
                     </div>
                   </th>
                 </tr>
               </thead>
-              {/* Table body with alternating row colors */}
+
+              {/* Table body - Dynamic course data rows */}
               <tbody>
+                {/* Map through courses array to create table rows */}
                 {courses.map((course, index) => (
+                  // Individual course row with unique key
                   <tr
                     key={course.courseNumber}
                     className={`
@@ -186,6 +201,7 @@ const RemainingCourses = () => {
                       hover:bg-gray-700/30 transition-colors
                     `}
                   >
+                    {/* Course data cells with consistent padding and text styling */}
                     <td className="px-6 py-4 text-sm text-gray-300">
                       {course.courseNumber}
                     </td>
@@ -196,7 +212,7 @@ const RemainingCourses = () => {
                       {course.creditHours}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-300">
-                      {course.courseLevel}
+                      {course.semesterCompleted}
                     </td>
                   </tr>
                 ))}
@@ -209,4 +225,4 @@ const RemainingCourses = () => {
   );
 };
 
-export default RemainingCourses;
+export default CompletedCourses;
