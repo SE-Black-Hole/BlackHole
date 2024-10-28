@@ -6,7 +6,6 @@ function App() {
   const [password, setPassword] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // Hardcoded login credentials
   const correctUsername = 'DegreePlanner';
   const correctPassword = '123456';
 
@@ -17,7 +16,7 @@ function App() {
     }
 
     if (username === correctUsername && password === correctPassword) {
-      setIsLoggedIn(true); // Successful login
+      setIsLoggedIn(true); 
     } else {
       alert('Incorrect username or password');
     }
@@ -29,7 +28,6 @@ function App() {
     setPassword('');
   };
 
-  // If logged in, show the dashboard page
   if (isLoggedIn) {
     return (
       <div className="App">
@@ -58,7 +56,6 @@ function App() {
     );
   }
 
-  // Otherwise, show the login page
   return (
     <div className="App">
       <div className="container">
@@ -75,7 +72,6 @@ function App() {
           </div>
           <div className="body-form">
             <form>
-              {/* Username Input */}
               <div className="input-group mb-3">
                 <div className="input-group-prepend">
                   <span className="input-group-text">
@@ -91,7 +87,6 @@ function App() {
                 />
               </div>
 
-              {/* Password Input */}
               <div className="input-group mb-3">
                 <div className="input-group-prepend">
                   <span className="input-group-text">
@@ -107,7 +102,6 @@ function App() {
                 />
               </div>
 
-              {/* Login Button */}
               <button
                 type="button"
                 className="btn btn-secondary btn-block"
@@ -116,7 +110,6 @@ function App() {
                 LOGIN
               </button>
 
-              {/* Remember Me and Forgot Password */}
               <div className="message">
                 <div>
                   <a href="#">Forgot your password?</a>
@@ -124,7 +117,6 @@ function App() {
               </div>
             </form>
 
-            {/* Social Icons */}
             <div className="social">
               <a href="#">
                 <i className="fab fa-facebook"></i>
