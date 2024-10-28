@@ -1,71 +1,87 @@
-# BlackHole
-# Getting Started with Create React App
+# Automatic Degree Planner
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A React-based application for managing and tracking degree progress, featuring course management and degree planning capabilities.
 
-## Available Scripts
+## Test Cases
 
-In the project directory, you can run:
+> **Important**: These test cases are implemented in the `sofia-use-cases` branch, not in the main branch. To test these features, make sure you checkout the correct branch:
+```bash
+git checkout sofia-use-cases
+```
 
-### `npm start`
+### Test Case 1: Completed Courses View
+- **Description**: User can view completed courses in their CS degree plan
+- **Test Steps**:
+  1. Launch the application
+  2. Log in using the credentials:
+     - Username: DegreePlanner
+     - Password: 123456
+  3. On the home dashboard, click "View Completed Courses"
+  4. Test the sorting functionality by clicking on:
+     - Course Name header (to sort alphabetically)
+     - Credit Hours header (to sort numerically)
+     - Semester Completed header (to sort chronologically)
+  5. Verify that:
+     - The table displays all completed courses
+     - Sorting works in both ascending and descending order
+     - The data is properly formatted and aligned
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Test Case 2: Remaining Courses View
+- **Description**: User can view remaining courses in their CS degree plan
+- **Test Steps**:
+  1. Launch the application
+  2. Log in using the credentials:
+     - Username: DegreePlanner
+     - Password: 123456
+  3. On the home dashboard, click "View Remaining Courses"
+  4. Test the sorting functionality by clicking on:
+     - Course Name header (to sort alphabetically)
+     - Credit Hours header (to sort numerically)
+     - Course Level header (to sort by academic level)
+  5. Verify that:
+     - The table displays all remaining required courses
+     - Sorting works in both ascending and descending order
+     - Course levels are properly ordered (Freshman → Senior)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Setup and Running Instructions
 
-### `npm test`
+### Prerequisites
+- Node.js (latest stable version)
+- npm (comes with Node.js)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Installation
 
-### `npm run build`
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd blackhole
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+2. Switch to the test cases branch:
+```bash
+git checkout sofia-use-cases
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+3. Install dependencies:
+```bash
+npm install
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+4. Start the development server:
+```bash
+npm start
+```
 
-### `npm run eject`
+The application will open in your default browser at `http://localhost:3000`
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Login Credentials
+- Username: DegreePlanner
+- Password: 123456
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Expected Test Results
+- Both tables should display properly formatted data
+- Sorting functionality should work smoothly in both directions
+- Tables should be responsive on different screen sizes
+- Course data should be accurately displayed
+- UI should maintain consistent dark theme styling
+- Sort indicators (arrows) should properly show current sort state
