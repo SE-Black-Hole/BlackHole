@@ -3,6 +3,7 @@ import Layout from './Layout';
 import { useState } from 'react';
 import Login from '../pages/Login';
 import Home from '../pages/Home';
+import RemainingCourses from '../pages/RemainingCourses';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -37,6 +38,16 @@ function App() {
             element={
               isLoggedIn ? (
                 <Home username={username} onLogout={handleLogout} />
+              ) : (
+                <Login onLogin={handleLogin} />
+              )
+            }
+          />
+          <Route
+            path="/remaining-courses"
+            element={
+              isLoggedIn ? (
+                <RemainingCourses />
               ) : (
                 <Login onLogin={handleLogin} />
               )
