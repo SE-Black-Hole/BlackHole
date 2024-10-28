@@ -4,6 +4,7 @@ import '../styles/App.css';
 import CurrentDegreePlanPage from './CurrentDegreePlanPage';
 import ManageClassesPage from './ManageClassesPage'; // Import the new page
 import SearchClassesPage from './SearchClassesPage';
+import CourseEnrollment from './CourseEnrollment';
 function App() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -65,6 +66,9 @@ function App() {
                       <Link to="/search-classes">
                         <button className="btn btn-secondary">Search Classes</button>
                       </Link>
+                      <Link to="/course-enrollment">
+                        <button className="btn btn-secondary">Course Enrollment</button>
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -73,6 +77,7 @@ function App() {
             <Route path="/current-degree-plan" element={<CurrentDegreePlanPage handleLogout={handleLogout} />} />
             <Route path="/manage-classes" element={<ManageClassesPage handleLogout={handleLogout} />} />
             <Route path="/search-classes" element={<SearchClassesPage />} />
+            <Route path="/course-enrollment" element={<CourseEnrollment />} />
           </Routes>
         ) : (
           <div className="container">
