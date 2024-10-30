@@ -4,7 +4,7 @@
 import config
 import pymongo
 
-from models import Course
+from models import Course, Student
 
 class DataManager:
 
@@ -12,6 +12,8 @@ class DataManager:
 		print('Connecting to database...')
 		client = pymongo.MongoClient(config.mongo_url, config.mongo_port)
 		self.db = client[config.db_name]
+		
+		self.db.students.create_index([("username", pymongo.ASCENDING)], unique=True)
 		
 	def get_all_classes(self):
 		results = []
@@ -27,3 +29,13 @@ class DataManager:
 		
 	def get_class(self, classNumber):
 		return Course(**self.db.classes.find_one({'classNumber' : classNumber}))
+
+	def create_student(self, student):
+		self.db.students.insert_one(student.dict())
+		
+	def update_student(self, student):
+		self.db.students.update_one({'username' : student.username}, {"$set": student.dict()})
+		
+	def get_student(self, username, password):
+		return Student(**self.db.students.find_one({'username' : username, 'password' : password}))
+		
