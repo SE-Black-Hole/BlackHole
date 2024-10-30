@@ -1,3 +1,6 @@
+# Author: Mixue Bao
+# Description: Connect to database (MongoDB) and fetch data
+
 import config
 import pymongo
 

@@ -1,3 +1,5 @@
+# Author: Mixue Bao
+# Description: Store database models
 
 from pydantic import BaseModel
 from typing import List
@@ -8,5 +10,5 @@ class Course(BaseModel):
 	className: str
 	major: str
 	prerequisites: List[str] = []
+	corequisites: List[str] = []
 	isMajorElective: bool = False
-	
