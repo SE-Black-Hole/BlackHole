@@ -37,6 +37,7 @@ class Node(object):
         self.co = []
         self.semesters_required = 0
         self.isMajorElective = False
+        self.Used = False
 
     def set_semesters_required(self, num_courses):
         if self.semesters_required < num_courses:
