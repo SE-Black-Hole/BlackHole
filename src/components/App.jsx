@@ -7,6 +7,7 @@ import Home from '../pages/Home';
 import RemainingCourses from '../pages/RemainingCourses';
 import CompletedCourses from '../pages/CompletedCourses';
 import AccountSettings from '../pages/AccountSettings';
+import Dashboard from '../pages/Dashboard';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -75,6 +76,12 @@ function App() {
               ) : (
                 <Login onLogin={handleLogin} />
               )
+            }
+          />
+          <Route
+            path="/dashboard"
+            element={
+              isLoggedIn ? <Dashboard /> : <Login onLogin={handleLogin} />
             }
           />
         </Routes>
