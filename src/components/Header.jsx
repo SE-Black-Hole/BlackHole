@@ -20,6 +20,7 @@ const Header = ({ onLogout }) => {
     { to: '/home', label: 'Home' },
     { to: '/dashboard', label: 'Dashboard' },
     { to: '/plan-management', label: 'Manage Plans' },
+    { to: '/course-search', label: 'Course Search' },
   ];
 
   return (
