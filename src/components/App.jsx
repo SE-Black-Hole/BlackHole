@@ -8,6 +8,8 @@ import RemainingCourses from '../pages/RemainingCourses';
 import CompletedCourses from '../pages/CompletedCourses';
 import AccountSettings from '../pages/AccountSettings';
 import Dashboard from '../pages/Dashboard';
+import VisualFlowchart from '../pages/VisualFlowchart';
+import ManagePlans from '../pages/ManagePlans';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -82,6 +84,18 @@ function App() {
             path="/dashboard"
             element={
               isLoggedIn ? <Dashboard /> : <Login onLogin={handleLogin} />
+            }
+          />
+          <Route
+            path="/flowchart"
+            element={
+              isLoggedIn ? <VisualFlowchart /> : <Login onLogin={handleLogin} />
+            }
+          />
+          <Route
+            path="/plan-management"
+            element={
+              isLoggedIn ? <ManagePlans /> : <Login onLogin={handleLogin} />
             }
           />
         </Routes>

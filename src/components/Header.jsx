@@ -19,6 +19,7 @@ const Header = ({ onLogout }) => {
   const links = [
     { to: '/home', label: 'Home' },
     { to: '/dashboard', label: 'Dashboard' },
+    { to: '/plan-management', label: 'Manage Plans' },
   ];
 
   return (

@@ -206,7 +206,7 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              {/* Credit Hours Breakdown (Now with circular progress indicators) */}
+              {/* Credit Hours Breakdown */}
               <div className="backdrop-blur-sm bg-white/5 rounded-lg p-6 border border-gray-700">
                 <h2 className="text-white text-xl font-medium mb-4">
                   Credit Hours Breakdown
