@@ -1,3 +1,4 @@
+// Sofia Deichert
 import React from 'react';
 import {
   PieChart,

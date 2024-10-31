@@ -1,3 +1,4 @@
+// Sofia, Rohin, Yatin, Hassan
 import { useNavigate } from 'react-router-dom';
 
 const Home = ({ username, onLogout }) => {
