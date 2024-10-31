@@ -5,17 +5,6 @@ const Home = ({ username, onLogout }) => {
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-black via-gray-900 to-gray-800 p-8">
-      {/* Logout Button */}
-      <div className="flex justify-end mb-6 px-8">
-        <button
-          type="button"
-          className="px-6 py-2 border border-gray-700 rounded-md text-gray-300 hover:bg-gray-800/50 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500"
-          onClick={onLogout}
-        >
-          LOGOUT
-        </button>
-      </div>
-
       {/* Main Content */}
       <div className="backdrop-blur-sm bg-white/10 rounded-lg shadow-2xl border border-gray-700 overflow-hidden min-h-[600px] mx-8">
         {/* Header */}

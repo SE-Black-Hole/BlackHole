@@ -1,12 +1,19 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { X, Menu } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { X, Menu, User, LogOut, Settings } from 'lucide-react';
 
-const Header = () => {
+const Header = ({ onLogout }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const handleLogout = () => {
+    onLogout();
+    navigate('/');
   };
 
   const links = [
@@ -25,7 +32,7 @@ const Header = () => {
             </div>
 
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex space-x-8 flex-1 justify-end">
+            <nav className="hidden md:flex space-x-8 flex-1 justify-end items-center">
               {links.map((link) => (
                 <Link
                   key={link.label}
@@ -35,6 +42,40 @@ const Header = () => {
                   {link.label}
                 </Link>
               ))}
+
+              {/* User Profile Dropdown */}
+              <div className="relative">
+                <button
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className="flex items-center space-x-2 text-white hover:text-gray-300 px-4 py-2"
+                >
+                  <User className="h-6 w-6" />
+                </button>
+
+                {/* Dropdown Menu */}
+                {isDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg py-1 border border-gray-700">
+                    <Link
+                      to="/account-settings"
+                      className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white"
+                      onClick={() => setIsDropdownOpen(false)}
+                    >
+                      <Settings className="h-4 w-4 mr-2" />
+                      Account Settings
+                    </Link>
+                    <button
+                      onClick={() => {
+                        setIsDropdownOpen(false);
+                        handleLogout();
+                      }}
+                      className="flex items-center w-full px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white"
+                    >
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
             </nav>
 
             {/* Mobile Menu Button */}
@@ -68,6 +109,22 @@ const Header = () => {
                   {link.label}
                 </Link>
               ))}
+              <Link
+                to="/account-settings"
+                className="text-white hover:text-gray-300 text-lg font-medium py-2"
+                onClick={toggleMenu}
+              >
+                Account Settings
+              </Link>
+              <button
+                onClick={() => {
+                  toggleMenu();
+                  handleLogout();
+                }}
+                className="text-white hover:text-gray-300 text-lg font-medium py-2 text-left"
+              >
+                Logout
+              </button>
             </nav>
           </div>
         </div>

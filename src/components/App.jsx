@@ -6,6 +6,7 @@ import SignUp from '../pages/Signup';
 import Home from '../pages/Home';
 import RemainingCourses from '../pages/RemainingCourses';
 import CompletedCourses from '../pages/CompletedCourses';
+import AccountSettings from '../pages/AccountSettings';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -23,7 +24,7 @@ function App() {
 
   return (
     <Router>
-      <Layout isLoggedIn={isLoggedIn}>
+      <Layout isLoggedIn={isLoggedIn} onLogout={handleLogout}>
         <Routes>
           <Route
             path="/"
@@ -61,6 +62,16 @@ function App() {
             element={
               isLoggedIn ? (
                 <CompletedCourses />
+              ) : (
+                <Login onLogin={handleLogin} />
+              )
+            }
+          />
+          <Route
+            path="/account-settings"
+            element={
+              isLoggedIn ? (
+                <AccountSettings onLogout={handleLogout} />
               ) : (
                 <Login onLogin={handleLogin} />
               )
