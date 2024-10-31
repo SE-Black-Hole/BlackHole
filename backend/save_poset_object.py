@@ -15,34 +15,75 @@ dm = DataManager()
 requiredByDegree = []
 electives = []
 core = []
+temps = []
 classes = dm.get_all_classes()
+# print(type(dm.get_all_classes()[0]))
 
 def makeRetrieveNode(c):
-    for node2 in requiredByDegree:
-        if node.classNumber == c.classNumber:
-            return node2, True
+    classNumber = None
 
-    for node2 in electives:
-        if node.classNumber == c.classNumber:
-            return node2, True
+    if type(c) == str:
+        classNumber = c
+    else:
+        classNumber = c.classNumber
+        # if classNumber == "CS2336":
+        #     print(c)
+        if c.major == 'Core_Classes' :
+            return Node(classNumber), False, True
+
+    # if classNumber == "CS2336":
+    #         print(str(c) + " helloooo")
+    for node in requiredByDegree:
+        if node.classNumber == classNumber:
+            # if classNumber == "CS2336":
+            #     print(c + " wow")
+            return node, True, False
+
+    for node in electives:
+        if node.classNumber == classNumber:
+            return node, True, False
+        
+    for node in temps:
+        if node.classNumber == classNumber:
+            return node, False, False
     
-    
-    return Node(c.classNumber, int(c.classNumber[-3])), False
+    temps.append(Node(classNumber))
+
+    return temps[-1], False, False
 
 for c in classes:
-    node, retrieved = makeRetrieveNode(c)
-    
-    
-    node.pre = [makeRetrieveNode(c2) for c2 in c.prerequisites]
+    node, retrieved, isCore = makeRetrieveNode(c)
+    # print(node)
+    if isCore:
+        core.append(node)
+        continue
+
+    node.pre = [makeRetrieveNode(c2)[0] for c2 in c.prerequisites + c.corequisites]
+    node.co = [makeRetrieveNode(c2)[0] for c2 in c.corequisites]
+    for n2 in node.pre:
+        # print(n2)
+        n2.preOf.append(node)
+        node.set_semesters_required(n2.semesters_required  + 1)
+
     if c.isMajorElective:
-        node.isMajorElective = True  
-        node.credits_required = 100
-        if retrieved:
+        node.isMajorElective = True 
+        if not retrieved:
             electives.append(node)
     elif not retrieved:
         requiredByDegree.append(node)
 
+
 with open("classObjects_data.pkl", 'wb') as outp:
     pickle.dump(Poset(requiredByDegree, electives, core), outp, pickle.HIGHEST_PROTOCOL)
 
+with open("classObjects_data.pkl", 'rb') as inp:
+    poset = pickle.load(inp)
+    print(poset)
+    # prin
+    # print(poset.fetch("CS3377"))
+    # print(poset.fetch("CS2336"))
+    # print(poset.fetch("CS3377").pre[0] == poset.fetch("CS2336"))
+    # print("HELLOOOOOO")
+    # node = None
+    # for n in poset.
     
