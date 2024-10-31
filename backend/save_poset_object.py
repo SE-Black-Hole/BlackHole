@@ -72,7 +72,7 @@ for c in classes:
     elif not retrieved:
         requiredByDegree.append(node)
 
-requiredByDegree = sorted(requiredByDegree, key=lambda node : node.semesters_required)
+
 
 with open("classObjects_data.pkl", 'wb') as outp:
     pickle.dump(Poset(requiredByDegree, electives, core), outp, pickle.HIGHEST_PROTOCOL)
