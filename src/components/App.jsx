@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './Layout';
 import { useState } from 'react';
 import Login from '../pages/Login';
+import SignUp from '../pages/Signup';
 import Home from '../pages/Home';
 import RemainingCourses from '../pages/RemainingCourses';
 import CompletedCourses from '../pages/CompletedCourses';
@@ -34,6 +35,7 @@ function App() {
               )
             }
           />
+          <Route path="/signup" element={<SignUp />} />
           <Route
             path="/home"
             element={
