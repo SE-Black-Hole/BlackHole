@@ -8,20 +8,27 @@ class Poset(object):
         self.core = core
         self.all = required + electives + core
         self.total_classes = len(self.all)
-        self.courses_by_time = []
-        self.separate_courses_by_time()
+        self.courses_by_time = self.create_separate_courses_by_time()
 
     def fetch(self, classNumber):
         for node in self.all:
             if classNumber == node.classNumber:
                 return node
         return None
-    def separate_courses_by_time(self):
-        for course in self.requiredByDegree:
+
+    def create_separate_courses_by_time(self):
+        courses_by_time = []
+        for course in self.requiredByDegree: 
             if len(self.courses_by_time) == course.semesters_required:
-                self.courses_by_time.append([course])
+                courses_by_time.append([course])
             else:
-                self.course_by_time[-1].append(course)
+                courses_by_time[-1].append(course)
+
+        return courses_by_time
+    def update_semesters_required(self,coursesANDchanges):
+        for courseANDchange in coursesANDchanges:
+            self.courses_by_time[courseANDchange[0].semesters_required + courseANDchange[1]].remove(courseANDchange[0])
+            self.courses_by_time[courseANDchange[0].semesters_required].append(courseANDchange[0])
 
     def __str__(self):
         string = ""
@@ -47,7 +54,7 @@ class Node(object):
         self.co = []
         self.semesters_required = 0
         self.isMajorElective = False
-        self.Used = False
+        # self.taken = False
 
     def set_semesters_required(self, num_courses):
         if self.semesters_required < num_courses:
@@ -55,10 +62,30 @@ class Node(object):
             for node in self.preOf:
                  node.set_semesters_required(num_courses + 1)
 
-    def update_semesters_required(self):
+    def update_semesters_required(self, updated_courses):
+        semesters_required = self.semesters_required
         self.semesters_required = max(self.pre,key=lambda course: course.semesters_required) + 1
+        if (semesters_required != self.semesters_required):
+            updated_courses.append([self, semesters_required - self.semesters_required])
+            for course in self.preOf:
+                course.update_semesters_required()
 
-    def course
+    def take_drop(self):
+        courses_to_update = []
+        if not self.semesters_required:
+            self.semesters_required = -1
+            # self.taken = True
+        elif self.semesters_required == -1:
+            # self.taken = False
+            self.semesters_required = 0
+        else: 
+            print("error for course: %s"% (self.classNumber))
+            return
+        
+        self.update_semesters_required(courses_to_update)
+        return courses_to_update
+            
+
 
     def __str__(self):
         return self.classNumber + " " + str(self.credits) + ", Pre: " + \
