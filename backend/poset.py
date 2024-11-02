@@ -46,7 +46,7 @@ class Poset(object):
 
 class Node(object):
     
-    def __init__(self, classNumber = ""):
+    def __init__(self, classNumber = "", locked_by_user=False):
         self.classNumber = classNumber
         self.credits = int(classNumber[-3])
         self.pre = []
@@ -54,6 +54,7 @@ class Node(object):
         self.co = []
         self.semesters_required = 0
         self.isMajorElective = False
+        self.locked_by_user = False
         # self.taken = False
 
     def set_semesters_required(self, num_courses):
@@ -69,6 +70,12 @@ class Node(object):
             updated_courses.append([self, semesters_required - self.semesters_required])
             for course in self.preOf:
                 course.update_semesters_required()
+
+    def set_required_by_user(self):
+        if (not self.required_by_user):
+            self.required_by_user = True
+        else:
+            self.required_by_user = False
 
     def take_drop(self):
         courses_to_update = []
