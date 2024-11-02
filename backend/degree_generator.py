@@ -7,7 +7,7 @@ class generator(object):
         self.semesters = []
         self.poset = poset
         self.major_electives_credits = major_electives_credits
-        self.create_semesters(classes_taken_per_semester)
+        self.create_semesters(time_to_graduate, classes_taken_per_semester,userReqCourses)
         self.userReqCourses = userReqCourses
 
     def generate(self):
@@ -16,6 +16,6 @@ class generator(object):
         # while
 
         return plans
-    def create_semesters(self,classes_taken_per_semester):
+    def create_semesters(self,time_to_graduate, classes_taken_per_semester,userReqCourses):
         pass
         
