@@ -13,8 +13,12 @@ class generator(object):
 
     def generate(self):
         plans = []
-        self.semesters[0].set_courses_avail(list(self.poset.courses_by_time[0]))
-        # while
+        plans.append([])
+        for semester in self.semesters:
+            semester.set_courses_avail(self.poset.courses_by_time[0])
+            
+            
+
 
         return plans
     def create_semesters(self,time_to_graduate, classes_taken_per_semester,userReqCourses):
