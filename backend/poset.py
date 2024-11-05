@@ -55,7 +55,7 @@ class Node(object):
         self.semesters_required = 0
         self.isMajorElective = False
         self.locked_by_user = False
-        # self.taken = False
+        self.taken = False
 
     def set_semesters_required(self, num_courses):
         if self.semesters_required < num_courses:
@@ -81,14 +81,12 @@ class Node(object):
         courses_to_update = []
         if not self.semesters_required:
             self.semesters_required = -1
-            # self.taken = True
         elif self.semesters_required == -1:
-            # self.taken = False
             self.semesters_required = 0
         else: 
             print("error for course: %s"% (self.classNumber))
             return
-        
+        self.taken = not self.taken
         self.update_semesters_required(courses_to_update)
         return courses_to_update
             

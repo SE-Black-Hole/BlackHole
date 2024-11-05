@@ -24,36 +24,41 @@ class Semester:
         Semester.index = (Semester.index + 1) % 3
         if Semester.index == 1: Semester.year += 1
 
-    def create_valid_schedule(self):
+    def create_schedule(self):
  
         courses_to_update = []
         
-        while self.locked or not self.can_make_schedule:
+        while not self.locked and self.can_make_schedule: # TODO check current_credit_hours everytime to return within the range
             for i in range(len(self.index_courses)): 
 
                 if len(self.courses_avail) - (i + 1) - self.index_courses[i] > 0:
                     courses_to_update += self.current_courses[i].take_drop()
-                    self.current_credit_hours += self.current_courses[i] - self.courses_avail[self.index_courses[i] + 1]
+                    self.current_credit_hours -= self.current_courses[i] - self.courses_avail[self.index_courses[i] + 1]
                     self.index_courses[i] += 1
                     self.current_courses[i] = self.courses_avail[self.index_courses[i]]
                     courses_to_update += self.current_courses[i].take_drop() 
                     return self.can_make_schedule, courses_to_update
-                elif i < len(self.index_courses) - 1:
+                elif (i < len(self.index_courses) - 1) and self.index_courses[i+1] + 2 < self.index_courses[i]:
                     courses_to_update += self.current_courses[i].take_drop()
-                    self.current_credit_hours += self.current_courses[i] - self.courses_avail[self.index_courses[i] + 1]
+                    self.current_credit_hours -= self.current_courses[i] - self.courses_avail[self.index_courses[i] + 1]
                     self.index_courses[i] = self.index_courses[i + 1] + 1
                     self.current_courses[i] = self.courses_avail[self.index_courses[i]]
                     courses_to_update += self.current_courses[i].take_drop() 
-                else: # TODO take_trop previous courses
+                elif i == len(self.index_courses) - 1: 
                     self.courses_num += 1
                     if self.courses_num <= len(self.courses_avail):
                         self.index_courses = [i for i in range(self.courses_num, -1, -1)]
-                        self.current_courses = [self.courses_avail[i] for i in range(self.courses_num)]
-                        for course in self.current_courses:
-                            courses_to_update += course.take_drop()
+                        temp = [self.courses_avail[i] for i in range(self.courses_num)]
+                        for i in range(len(temp)): #know if courses remains and if it is new
+                            if (not temp[i].taken):
+                                courses_to_update += temp[i] .take_drop()
+                            if i != len(self.current_courses) and self.current_courses[i] not in temp:
+                                courses_to_update += self.self.current_courses[i].take_drop()
                         self.current_credit_hours = sum([node.credits for node in self.current_courses])
-                    else:
-                        self.can_make_schedule = False
+                        self.current_courses = temp
+                        return courses_to_update
+                    self.can_make_schedule = False
+                    
                     return courses_to_update
 
 
@@ -73,7 +78,7 @@ class Semester:
             self.current_credit_hours = sum([node.credits for node in self.current_courses])
         else:
             self.can_make_schedule = False
-        return courses_to_update
+        return self.can_make_schedule, courses_to_update
         
     def add_nodes(self, nodes):
         self.current_credit_hours += sum([course.credits for course in nodes])
