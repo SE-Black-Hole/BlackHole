@@ -13,7 +13,7 @@ class Semester:
         self.current_credit_hours = 0
         self.min_credit_hours = min_credit_hours
         self.skip_semester = skip_semester
-        
+        self.can_return_this_size = False
         self.index_courses = []
         self.can_make_schedule = True
         self.courses_num = int(self.min_credit_hours/3)
@@ -28,7 +28,7 @@ class Semester:
  
         courses_to_update = []
         
-        while not self.locked and self.can_make_schedule: # TODO check current_credit_hours everytime to return within the range
+        while not self.locked and self.can_make_schedule: # TODO check if courses_to_update is empty after can mmake schedule is false
             for i in range(len(self.index_courses)): 
 
                 if len(self.courses_avail) - (i + 1) - self.index_courses[i] > 0:
@@ -37,29 +37,36 @@ class Semester:
                     self.index_courses[i] += 1
                     self.current_courses[i] = self.courses_avail[self.index_courses[i]]
                     courses_to_update += self.current_courses[i].take_drop() 
-                    return self.can_make_schedule, courses_to_update
+                    if self.current_credit_hours > self.min_credit_hours:
+                        if self.current_credit_hours < self.max_credit_hours:
+                            self.can_return_this_size = True                        
+                            return self.can_make_schedule, courses_to_update
+
                 elif (i < len(self.index_courses) - 1) and self.index_courses[i+1] + 2 < self.index_courses[i]:
                     courses_to_update += self.current_courses[i].take_drop()
                     self.current_credit_hours -= self.current_courses[i] - self.courses_avail[self.index_courses[i] + 1]
                     self.index_courses[i] = self.index_courses[i + 1] + 1
                     self.current_courses[i] = self.courses_avail[self.index_courses[i]]
-                    courses_to_update += self.current_courses[i].take_drop() 
-                elif i == len(self.index_courses) - 1: 
-                    self.courses_num += 1
-                    if self.courses_num <= len(self.courses_avail):
-                        self.index_courses = [i for i in range(self.courses_num, -1, -1)]
-                        temp = [self.courses_avail[i] for i in range(self.courses_num)]
-                        for i in range(len(temp)): #know if courses remains and if it is new
-                            if (not temp[i].taken):
-                                courses_to_update += temp[i] .take_drop()
-                            if i != len(self.current_courses) and self.current_courses[i] not in temp:
-                                courses_to_update += self.self.current_courses[i].take_drop()
-                        self.current_credit_hours = sum([node.credits for node in self.current_courses])
-                        self.current_courses = temp
-                        return courses_to_update
-                    self.can_make_schedule = False
+                    courses_to_update += self.current_courses[i].take_drop()
                     
-                    return courses_to_update
+            self.courses_num += 1
+            if self.can_return_this_size and self.courses_num <= len(self.courses_avail):
+                self.can_return_this_size = False
+                self.index_courses = [i for i in range(self.courses_num, -1, -1)]
+                temp = [self.courses_avail[i] for i in range(self.courses_num)]
+                for i in range(len(temp)): # know if courses remains and if it is new
+                    if (not temp[i].taken):
+                        courses_to_update += temp[i].take_drop()
+                    if i != len(self.current_courses) and self.current_courses[i] not in temp:
+                        courses_to_update += self.current_courses[i].take_drop()
+                self.current_credit_hours = sum([node.credits for node in self.current_courses])
+                self.current_courses = temp
+                if self.current_credit_hours > self.min_credit_hours:
+                    if self.current_credit_hours < self.max_credit_hours:
+                        self.can_return_this_size = True                        
+                        return self.can_make_schedule, courses_to_update
+            else:
+                self.can_make_schedule = False
 
 
         return self.can_make_schedule, courses_to_update
@@ -67,7 +74,7 @@ class Semester:
     def get_courses_to_update():
         pass
 
-    def set_courses_avail(self, courses_avail):
+    def set_courses_avail(self, courses_avail): # TODO make it use the method above and check for sum_all_classes > min
         self.courses_avail = list(courses_avail)
         courses_to_update = []
         if self.courses_num <= len(self.courses_avail):
