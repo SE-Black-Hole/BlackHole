@@ -19,7 +19,7 @@ class Poset(object):
     def create_separate_courses_by_time(self):
         courses_by_time = []
         for course in self.requiredByDegree: 
-            if len(self.courses_by_time) == course.semesters_required:
+            if len(courses_by_time) == course.semesters_required:
                 courses_by_time.append([course])
             else:
                 courses_by_time[-1].append(course)
@@ -52,6 +52,7 @@ class Node(object):
         self.pre = []
         self.preOf = []
         self.co = []
+        self.coOf = []
         self.semesters_required = 0
         self.isMajorElective = False
         self.locked_by_user = False
@@ -95,6 +96,6 @@ class Node(object):
     def __str__(self):
         return self.classNumber + " " + str(self.credits) + ", Pre: " + \
         str([str(n.classNumber) for n in self.pre ]) + ", co: " + str([str(n.classNumber) for n in self.co ]) + \
-        ", preOf:" + str([str(n.classNumber) for n in self.preOf ]) + ", " + str(self.semesters_required) + ", " + str(self.isMajorElective)
+        ", preOf:" + str([str(n.classNumber) for n in self.preOf ]) + ", coOf:" + str([str(n.classNumber) for n in self.coOf ]) + ", " + str(self.semesters_required) + ", " + str(self.isMajorElective)
 
 

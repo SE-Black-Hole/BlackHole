@@ -37,17 +37,17 @@ class Semester:
                     self.index_courses[i] += 1
                     self.current_courses[i] = self.courses_avail[self.index_courses[i]]
                     courses_to_update += self.current_courses[i].take_drop() 
-                    if self.current_credit_hours > self.min_credit_hours:
-                        if self.current_credit_hours < self.max_credit_hours:
-                            self.can_return_this_size = True                        
-                            return self.can_make_schedule, courses_to_update
-
                 elif (i < len(self.index_courses) - 1) and self.index_courses[i+1] + 2 < self.index_courses[i]:
                     courses_to_update += self.current_courses[i].take_drop()
                     self.current_credit_hours -= self.current_courses[i] - self.courses_avail[self.index_courses[i] + 1]
                     self.index_courses[i] = self.index_courses[i + 1] + 1
                     self.current_courses[i] = self.courses_avail[self.index_courses[i]]
                     courses_to_update += self.current_courses[i].take_drop()
+                
+                if self.current_credit_hours > self.min_credit_hours:
+                        if self.current_credit_hours < self.max_credit_hours:
+                            self.can_return_this_size = True                        
+                            return self.can_make_schedule, courses_to_update
                     
             self.courses_num += 1
             if self.can_return_this_size and self.courses_num <= len(self.courses_avail):
