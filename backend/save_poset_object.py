@@ -64,13 +64,15 @@ for c in classes:
         # print(n2)
         n2.preOf.append(node)
         node.set_semesters_required(n2.semesters_required  + 1)
-
+    for n2 in node.co:
+        n2.coOf.append(node)
     if c.isMajorElective:
         node.isMajorElective = True 
         if not retrieved:
             electives.append(node)
     elif not retrieved:
         requiredByDegree.append(node)
+
 
 
 with open("classObjects_data.pkl", 'wb') as outp:
