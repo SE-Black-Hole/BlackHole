@@ -4,9 +4,9 @@ class Semester:
     semester_names = ["Fall", 'Spring', 'Summer']
     index = 0
     year = 2024
-    def  __init__(self, min_credit_hours=15, max_credit_hours=19, req_by_user=[],locked=False, skip_semester=False):
+    def  __init__(self, min_credit_hours=15, max_credit_hours=19,locked=False, skip_semester=False):
         self.max_credit_hours = max_credit_hours
-        self.req_by_user = req_by_user
+        self.required_courses = []
         self.courses_avail = []
         self.current_courses = []
         self.locked = locked
@@ -15,9 +15,9 @@ class Semester:
         self.skip_semester = skip_semester
         self.can_return_this_size = False
         self.index_courses = []
-        self.can_make_schedule = True
+        self.coreqs_duo = []
+        self.can_make_schedule = False
         self.courses_num = int(self.min_credit_hours/3)
-        
         
 
         self.semester_name = Semester.semester_names[Semester.index] + " " + str(Semester.year)
@@ -28,7 +28,7 @@ class Semester:
  
         courses_to_update = []
         
-        while not self.locked and self.can_make_schedule: # TODO check if courses_to_update is empty after can mmake schedule is false
+        while not self.locked and self.can_make_schedule: #add iteration for coreq courses adjust for locked courses, remember state
             for i in range(len(self.index_courses)): 
 
                 if len(self.courses_avail) - (i + 1) - self.index_courses[i] > 0:
@@ -44,11 +44,11 @@ class Semester:
                     self.current_courses[i] = self.courses_avail[self.index_courses[i]]
                     courses_to_update += self.current_courses[i].take_drop()
                 
-                if self.current_credit_hours > self.min_credit_hours:
-                        if self.current_credit_hours < self.max_credit_hours:
-                            self.can_return_this_size = True                        
-                            return self.can_make_schedule, courses_to_update
-                    
+                if self.current_credit_hours >= self.min_credit_hours:
+                    if self.current_credit_hours <= self.max_credit_hours:
+                        self.can_return_this_size = True                        
+                        return courses_to_update
+            # if       
             self.courses_num += 1
             if self.can_return_this_size and self.courses_num <= len(self.courses_avail):
                 self.can_return_this_size = False
@@ -61,31 +61,40 @@ class Semester:
                         courses_to_update += self.current_courses[i].take_drop()
                 self.current_credit_hours = sum([node.credits for node in self.current_courses])
                 self.current_courses = temp
-                if self.current_credit_hours > self.min_credit_hours:
-                    if self.current_credit_hours < self.max_credit_hours:
+                if self.current_credit_hours >= self.min_credit_hours:
+                    if self.current_credit_hours <= self.max_credit_hours:
                         self.can_return_this_size = True                        
-                        return self.can_make_schedule, courses_to_update
+                        return courses_to_update
             else:
                 self.can_make_schedule = False
+                for course in self.current_courses:
+                    course.take_drop()
+                self.current_courses = []
 
 
-        return self.can_make_schedule, courses_to_update
+        return courses_to_update
 
-    def get_courses_to_update():
-        pass
+    def get_current_courses(self):
+        return list(self.current_courses)
+
+    def set_required_courses(self, courses):
+        self.required_courses = courses
+        for course in courses:
+            course.set_locked()
+
+    def remove_required_courses(self,courses):
+        for course in course:
+            self.required_courses.remove(course)
+            course.set_locked()
 
     def set_courses_avail(self, courses_avail): # TODO make it use the method above and check for sum_all_classes > min
         self.courses_avail = list(courses_avail)
-        courses_to_update = []
-        if self.courses_num <= len(self.courses_avail):
-            self.index_courses = [i for i in range(self.courses_num, -1, -1)]
-            self.current_courses = [self.courses_avail[i] for i in range(self.courses_num)]
-            for course in self.current_courses:
-                courses_to_update += course.take_drop()
-            self.current_credit_hours = sum([node.credits for node in self.current_courses])
-        else:
-            self.can_make_schedule = False
-        return self.can_make_schedule, courses_to_update
+        if self.min_credit_hours <= sum([n.credits for n in self.courses_avail]):
+            self.can_make_schedule = True
+        for course in self.courses_avail:
+            if course.check_if_coreq_available():
+                self.coreqs_duo.append([course, course.coOf[0]])
+        return self.create_schedule()
         
     def add_nodes(self, nodes):
         self.current_credit_hours += sum([course.credits for course in nodes])

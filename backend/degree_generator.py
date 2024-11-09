@@ -12,14 +12,23 @@ class generator(object):
         self.userReqCourses = userReqCourses
 
     def generate(self):
-        plans = []
-        plans.append([])
-        for semester in self.semesters:
-            semester.set_courses_avail(self.poset.courses_by_time[0])
+        plans = [self.get_new_empty_lists_per_semester()]
+        plans[0][0] = self.semesters[0].set_courses_avail(self.poset.courses_by_time[0])[1]
+        semester_index = 0
+        while self.semesters[0].can_make_schedule:
+            courses_to_update = []
+            if self.semesters[semester_index].can_make_schedule and semester_index < len(self.create_semesters) - 1:
+                semester_index += 1
+                courses_to_update = self.semesters[semester_index].set_courses_avail(self.poset.courses_by_time[0])
+            else:
+                semester_index -= 1
+                courses_to_update = self.semesters[semester_index].create_schedule()
+            self.poset.update_semesters_required(courses_to_update)
+            if self.semesters[semester_index].can_make_schedule:
+                plans[-1][semester_index] = self.semesters[semester_index].get_current_schedule()    
+                if semester_index == len(self.create_semesters) - 1:
+                    plans.append(self.get_new_empty_lists_per_semester())
             
-            
-
-
         return plans
     def create_semesters(self,time_to_graduate, classes_taken_per_semester,userReqCourses):
         for past_semester in classes_taken_per_semester: # courses should have required_by_user set to True
@@ -30,4 +39,6 @@ class generator(object):
 
         for wished_by_user in userReqCourses:
             self.semesters[wished_by_user[0]].add_required_courses(wished_by_user[1])
+    def get_new_empty_lists_per_semester(self):
+        return [[] for i in self.semesters]
         

@@ -25,10 +25,12 @@ class Poset(object):
                 courses_by_time[-1].append(course)
 
         return courses_by_time
-    def update_semesters_required(self,coursesANDchanges):
-        for courseANDchange in coursesANDchanges:
-            self.courses_by_time[courseANDchange[0].semesters_required + courseANDchange[1]].remove(courseANDchange[0])
-            self.courses_by_time[courseANDchange[0].semesters_required].append(courseANDchange[0])
+    def update_semesters_required(self,courses):
+        for course in courses:
+            if not course.updated:
+                self.courses_by_time[course.previous_semesters_required].remove(course)
+                self.courses_by_time[course.semesters_required].append(course)
+                course.update()
 
     def __str__(self):
         string = ""
@@ -54,9 +56,11 @@ class Node(object):
         self.co = []
         self.coOf = []
         self.semesters_required = 0
+        self.previous_semesters_required = 0
         self.isMajorElective = False
-        self.locked_by_user = False
+        self.locked = False
         self.taken = False
+        self.updated = True
 
     def set_semesters_required(self, num_courses):
         if self.semesters_required < num_courses:
@@ -68,9 +72,23 @@ class Node(object):
         semesters_required = self.semesters_required
         self.semesters_required = max(self.pre,key=lambda course: course.semesters_required) + 1
         if (semesters_required != self.semesters_required):
-            updated_courses.append([self, semesters_required - self.semesters_required])
+            if self.updated:
+                updated_courses.append(self)
+                self.updated = False
+            else:
+                self.update()
+            self.previous_semesters_required = semesters_required
             for course in self.preOf:
                 course.update_semesters_required()
+
+    def check_if_coreq_available(self):
+        for course in self.coOf[0].pre:
+            if course != self and not (course.semesters_required < 0):
+                return False
+        return len(self.Coof) > 0
+    
+    def update(self):
+        self.updated = True
 
     def set_required_by_user(self):
         if (not self.required_by_user):
@@ -84,6 +102,10 @@ class Node(object):
             self.semesters_required = -1
         elif self.semesters_required == -1:
             self.semesters_required = 0
+        elif self.semesters_required == -2:
+            self.semesters_required = 1
+        elif self.semesters_required == 1:
+            self.semesters_required = -2
         else: 
             print("error for course: %s"% (self.classNumber))
             return
@@ -91,7 +113,8 @@ class Node(object):
         self.update_semesters_required(courses_to_update)
         return courses_to_update
             
-
+    def set_locked(self):
+        self.locked = not self.locked
 
     def __str__(self):
         return self.classNumber + " " + str(self.credits) + ", Pre: " + \
