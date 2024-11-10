@@ -65,7 +65,10 @@ const PlanSchedule = () => {
     ];
     
           
-      const [courses, setCourses] = useState(coursesData);
+    const mainCourses = coursesData.slice(0, coursesData.findIndex(course => course.classNumber === "CS 4485") + 1);
+    const guidedElectives = coursesData.slice(coursesData.findIndex(course => course.classNumber === "CS 4485") + 1);
+
+    const [courses, setCourses] = useState(mainCourses);
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
     const [completedCourses, setCompletedCourses] = useState(new Set());
   
@@ -101,13 +104,14 @@ const PlanSchedule = () => {
         }
         setCompletedCourses(newCompletedCourses);
     };
-  
+
     const handleGenerateFlowchartClick = () => {
-        const uncompletedCourses = courses.filter(course => !completedCourses.has(course.classNumber));
-        navigate('/flowchart', { state: { remainingCourses: uncompletedCourses } });
+        const uncompletedMainCourses = courses.filter(course => !completedCourses.has(course.classNumber));
+        const uncompletedGuidedElectives = guidedElectives.filter(course => !completedCourses.has(course.classNumber)).slice(0, 4);
+        const flowchartCourses = [...uncompletedMainCourses, ...uncompletedGuidedElectives];
+        navigate('/flowchart', { state: { remainingCourses: flowchartCourses } });
     };
     
-
     return (
         <div className="min-h-screen w-full bg-gradient-to-br from-black via-gray-900 to-gray-800 p-8">
             <div className="backdrop-blur-sm bg-white/10 rounded-lg shadow-2xl border border-gray-700 overflow-hidden">
@@ -125,7 +129,7 @@ const PlanSchedule = () => {
                                         onClick={() => handleSort('className')}
                                     >
                                         <div className="flex items-center space-x-1">
-                                            <span>Course Name</span> {getSortIcon('className')}
+                                            <span>Course Name</span>
                                         </div>
                                     </th>
                                     <th
@@ -133,18 +137,40 @@ const PlanSchedule = () => {
                                         onClick={() => handleSort('creditHours')}
                                     >
                                         <div className="flex items-center space-x-1">
-                                            <span>Credit Hours</span> {getSortIcon('creditHours')}
+                                            <span>Credit Hours</span>
                                         </div>
                                     </th>
                                     <th className="px-6 py-3 text-left text-sm font-medium text-gray-300">Taken Class?</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {courses.map((course, index) => (
-                                    <tr
-                                        key={course.classNumber}
-                                        className={`${index % 2 === 0 ? 'bg-gray-800/30' : 'bg-gray-800/10'} hover:bg-gray-700/30 transition-colors border-b border-gray-700/50`}
-                                    >
+                                {mainCourses.map((course, index) => (
+                                    <tr key={course.classNumber} className={`${index % 2 === 0 ? 'bg-gray-800/30' : 'bg-gray-800/10'} hover:bg-gray-700/30 transition-colors border-b border-gray-700/50`}>
+                                        <td className="px-6 py-4 text-sm text-gray-300">{course.classNumber}</td>
+                                        <td className="px-6 py-4 text-sm text-gray-300">{course.className}</td>
+                                        <td className="px-6 py-4 text-sm text-gray-300">{course.creditHours}</td>
+                                        <td className="px-6 py-4 text-sm text-center text-gray-300">
+                                            <input
+                                                type="checkbox"
+                                                checked={completedCourses.has(course.classNumber)}
+                                                onChange={() => handleCheckboxChange(course.classNumber)}
+                                            />
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+
+                            {/* Guided Electives Section */}
+                            <thead>
+                                <tr>
+                                    <th colSpan="4" className="px-6 py-4 text-left text-sm font-medium text-gray-300 bg-gray-800">
+                                        Guided Electives
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {guidedElectives.map((course, index) => (
+                                    <tr key={course.classNumber} className={`${index % 2 === 0 ? 'bg-gray-800/30' : 'bg-gray-800/10'} hover:bg-gray-700/30 transition-colors border-b border-gray-700/50`}>
                                         <td className="px-6 py-4 text-sm text-gray-300">{course.classNumber}</td>
                                         <td className="px-6 py-4 text-sm text-gray-300">{course.className}</td>
                                         <td className="px-6 py-4 text-sm text-gray-300">{course.creditHours}</td>

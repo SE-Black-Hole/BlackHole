@@ -13,7 +13,7 @@ const Flowchart = () => {
             remainingCourses.map((course, index) => ({
                 id: course.classNumber,
                 data: { label: `${course.className} (${course.classNumber})` },
-                position: { x: 0, y: index * 100 },
+                position: { x: index * 250, y: 0 }, // Horizontal positioning
                 style: { backgroundColor: '#1E40AF', color: '#fff', padding: 10, borderRadius: 8 }
             })),
         [remainingCourses]
