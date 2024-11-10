@@ -8,17 +8,24 @@ const Login = ({ onLogin }) => {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
+  const validCredentials = [
+    { username: '2', password: '2' },
+    { username: 'Rohin', password: '3' },
+    { username: 'Yatin', password: '4' },
+    { username: 'Hassan', password: '5' },
+  ];
+
   const handleLogin = () => {
     if (username === '' || password === '') {
       alert('Please enter both username and password.');
       return;
     }
 
-    // Hardcoded login credentials
-    const correctUsername = '1';
-    const correctPassword = '1';
+    const isValidUser = validCredentials.some(
+      (cred) => cred.username === username && cred.password === password
+    );
 
-    if (username === correctUsername && password === correctPassword) {
+    if (isValidUser) {
       onLogin(username);
     } else {
       alert('Incorrect username or password');

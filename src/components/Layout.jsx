@@ -1,6 +1,5 @@
 // Sofia
 import Header from './Header';
-import Footer from './Footer';
 import useResetScroll from '../hooks/useResetScroll';
 
 const Layout = ({ children, isLoggedIn, onLogout }) => {
@@ -16,7 +15,6 @@ const Layout = ({ children, isLoggedIn, onLogout }) => {
       >
         {children}
       </main>
-      {isLoggedIn && <Footer />}
     </div>
   );
 };

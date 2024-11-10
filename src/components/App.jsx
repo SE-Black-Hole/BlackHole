@@ -12,6 +12,7 @@ import Dashboard from '../pages/Dashboard';
 import VisualFlowchart from '../pages/VisualFlowchart';
 import ManagePlans from '../pages/ManagePlans';
 import PlanEditor from '../pages/PlanEditor';
+import PlanSchedule from '../pages/PlanSchedule';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -86,6 +87,13 @@ function App() {
             path="/dashboard"
             element={
               isLoggedIn ? <Dashboard /> : <Login onLogin={handleLogin} />
+            }
+          />
+           
+           <Route
+            path="/plan-schedule"
+            element={
+              isLoggedIn ? <PlanSchedule /> : <Login onLogin={handleLogin} />
             }
           />
           <Route

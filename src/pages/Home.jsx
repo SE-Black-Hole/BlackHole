@@ -50,6 +50,22 @@ const Home = ({ username, onLogout }) => {
                   </div>
                 </button>
 
+                {/* Plan Schedule Card/Button */}
+                <button
+                  onClick={() => navigate('/plan-schedule')}
+                  className="group relative overflow-hidden rounded-lg p-6 border border-gray-700 bg-gradient-to-br from-gray-800/50 to-black/50 hover:from-gray-700/50 hover:to-gray-800/50 transition-all duration-300 backdrop-blur-sm hover:shadow-lg hover:shadow-black/30 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/10 to-orange-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="relative">
+                    <h4 className="text-lg font-medium text-gray-200 mb-2">
+                      Plan Schedule
+                    </h4>
+                    <p className="text-gray-400 text-sm">
+                      Plan and organize your upcoming course schedule
+                    </p>
+                  </div>
+                </button>
+
                 {/* Visual Flowchart Card/Button */}
                 <button
                   onClick={() => navigate('/flowchart')}
@@ -65,6 +81,7 @@ const Home = ({ username, onLogout }) => {
                     </p>
                   </div>
                 </button>
+                
                 {/* Remaining Courses Card/Button */}
                 <button
                   onClick={() => navigate('/remaining-courses')}
@@ -105,5 +122,6 @@ const Home = ({ username, onLogout }) => {
     </div>
   );
 };
+
 
 export default Home;
