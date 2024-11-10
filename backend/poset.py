@@ -23,7 +23,10 @@ class Poset(object):
                 courses_by_time.append([course])
             else:
                 courses_by_time[-1].append(course)
-
+        
+        courses_by_time.append([])
+        courses_by_time.append([])
+        
         return courses_by_time
     def update_semesters_required(self,courses):
         for course in courses:
@@ -48,7 +51,7 @@ class Poset(object):
 
 class Node(object):
     
-    def __init__(self, classNumber = "", locked_by_user=False):
+    def __init__(self, classNumber = ""):
         self.classNumber = classNumber
         self.credits = int(classNumber[-3])
         self.pre = []
@@ -62,6 +65,11 @@ class Node(object):
         self.taken = False
         self.updated = True
 
+    def update_semesters_required_all(self, semesters_required=0):
+        self.semesters_required = semesters_required
+        for node in self.preOf:
+            node.set_semesters_required(self.semesters_required + 1)
+
     def set_semesters_required(self, num_courses):
         if self.semesters_required < num_courses:
             self.semesters_required = num_courses
@@ -69,35 +77,35 @@ class Node(object):
                  node.set_semesters_required(num_courses + 1)
 
     def update_semesters_required(self, updated_courses):
+
         semesters_required = self.semesters_required
-        self.semesters_required = max(self.pre,key=lambda course: course.semesters_required) + 1
+        new_index = max(self.pre,key=lambda course: course.semesters_required).semesters_required + 1
+        self.semesters_required = 0 if new_index < 0 else new_index
         if (semesters_required != self.semesters_required):
             if self.updated:
                 updated_courses.append(self)
                 self.updated = False
-            else:
-                self.update()
             self.previous_semesters_required = semesters_required
             for course in self.preOf:
-                course.update_semesters_required()
+                course.update_semesters_required(updated_courses)
 
     def check_if_coreq_available(self):
+        if not len(self.coOf):
+            return False
         for course in self.coOf[0].pre:
             if course != self and not (course.semesters_required < 0):
                 return False
-        return len(self.Coof) > 0
+        return True
     
     def update(self):
         self.updated = True
 
     def set_required_by_user(self):
-        if (not self.required_by_user):
-            self.required_by_user = True
-        else:
-            self.required_by_user = False
+        self.required_by_user = not self.required_by_user
 
     def take_drop(self):
-        courses_to_update = []
+        course_to_update = []
+        semesters_required = self.semesters_required
         if not self.semesters_required:
             self.semesters_required = -1
         elif self.semesters_required == -1:
@@ -110,8 +118,13 @@ class Node(object):
             print("error for course: %s"% (self.classNumber))
             return
         self.taken = not self.taken
-        self.update_semesters_required(courses_to_update)
-        return courses_to_update
+        if self.updated:
+            course_to_update.append(self)
+            self.updated = False
+            self.previous_semesters_required = semesters_required
+        for course in self.preOf:
+            course.update_semesters_required(course_to_update)
+        return course_to_update
             
     def set_locked(self):
         self.locked = not self.locked
@@ -122,3 +135,18 @@ class Node(object):
         ", preOf:" + str([str(n.classNumber) for n in self.preOf ]) + ", coOf:" + str([str(n.classNumber) for n in self.coOf ]) + ", " + str(self.semesters_required) + ", " + str(self.isMajorElective)
 
 
+# cs3354 = Node("CS3354")
+# ece2390 = Node("ECE2390")
+# cs3345 = Node("CS3345")
+# cs3345.preOf.append(cs3354)
+# cs3354.pre.append(cs3345)
+# cs3354.pre.append(ece2390)
+# ece2390.preOf.append(cs3354)
+# cs3354.co.append(ece2390)
+# ece2390.coOf.append(cs3354)
+# ece2390.set_semesters_required()
+# cs3345.set_semesters_required()
+# poset = Poset([cs3345,cs3354,ece2390],[Node("CS4365")], [Node("HIST1302")])
+# expected = "CS3345 3, Pre: [], co: [], preOf:['CS335[301 chars]\n\n"
+# actual = str(poset)
+# print(poset)
