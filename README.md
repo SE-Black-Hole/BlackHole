@@ -50,7 +50,7 @@ There are two test cases for the database under the \server directory:
 	
 Running these test cases will connect to the database, execute the query, and print the results.
 
-Steps to run use cases:
+Steps to run test cases:
 - open up the command line / Powershell
 - Python must be installed
 - install python packages by typing in "pip install -r requirements.txt" in command line
