@@ -5,14 +5,11 @@ const PlanSchedule = () => {
     const navigate = useNavigate();
 
     const coursesData = [
-        { classNumber: "MATH 2413", className: "Calculus I", creditHours: 4 },
-        { classNumber: "MATH 2417", className: "Enhanced Calculus I", creditHours: 4 },
-        { classNumber: "RHET 1302", className: "Rhetoric", creditHours: 3 },
         { classNumber: "ECS 1100", className: "Introduction to Engineering and Computer Science", creditHours: 1 },
         { classNumber: "CS 1200", className: "Introduction to Computer Science and Software Engineering", creditHours: 2 },
         { classNumber: "CS 1436", className: "Programming Fundamentals", creditHours: 4 },
+        { classNumber: "MATH 2413", className: "Calculus I", creditHours: 4 },
         { classNumber: "MATH 2414", className: "Calculus II", creditHours: 4 },
-        { classNumber: "MATH 2419", className: "Enhanced Calculus II", creditHours: 4 },
         { classNumber: "PHYS 2325", className: "Mechanics", creditHours: 3 },
         { classNumber: "PHYS 2125", className: "Physics Lab I", creditHours: 1 },
         { classNumber: "CS 1337", className: "Computer Science I", creditHours: 3 },
@@ -105,11 +102,33 @@ const PlanSchedule = () => {
         setCompletedCourses(newCompletedCourses);
     };
 
+    const getRandomGuidedElectives = (n) => {
+        const uncompletedGuidedElectives = guidedElectives.filter(course => !completedCourses.has(course.classNumber));
+        const randomElectives = [];
+        while (randomElectives.length < n && uncompletedGuidedElectives.length > 0) {
+            const randomIndex = Math.floor(Math.random() * uncompletedGuidedElectives.length);
+            randomElectives.push(uncompletedGuidedElectives.splice(randomIndex, 1)[0]);
+        }
+        return randomElectives;
+    };
+
     const handleGenerateFlowchartClick = () => {
-        const uncompletedMainCourses = courses.filter(course => !completedCourses.has(course.classNumber));
-        const uncompletedGuidedElectives = guidedElectives.filter(course => !completedCourses.has(course.classNumber)).slice(0, 4);
-        const flowchartCourses = [...uncompletedMainCourses, ...uncompletedGuidedElectives];
+        const uncompletedMainCourses = mainCourses.filter(course => !completedCourses.has(course.classNumber));
+        const randomGuidedElectives = getRandomGuidedElectives(4);
+        const flowchartCourses = [...uncompletedMainCourses, ...randomGuidedElectives];
         navigate('/flowchart', { state: { remainingCourses: flowchartCourses } });
+    };
+
+    const handleViewRemainingClick = () => {
+        const remainingCourses = mainCourses.concat(guidedElectives).filter(course => !completedCourses.has(course.classNumber));
+        navigate('/remaining-courses', { state: { remainingCourses } });
+    };
+
+    const handleViewCompletedClick = () => {
+        const completedCoursesList = Array.from(completedCourses).map(courseNumber => 
+            mainCourses.concat(guidedElectives).find(course => course.classNumber === courseNumber)
+        ).filter(Boolean);
+        navigate('/completed-courses', { state: { completedCourses: completedCoursesList } });
     };
     
     return (
@@ -186,7 +205,19 @@ const PlanSchedule = () => {
                             </tbody>
                         </table>
                     </div>
-                    <div className="mt-6 flex justify-end">
+                    <div className="mt-6 flex justify-end space-x-4">
+                        <button
+                            onClick={handleViewRemainingClick}
+                            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                        >
+                            View Remaining Classes
+                        </button>
+                        <button
+                            onClick={handleViewCompletedClick}
+                            className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
+                        >
+                            View Completed Classes
+                        </button>
                         <button
                             onClick={handleGenerateFlowchartClick}
                             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
