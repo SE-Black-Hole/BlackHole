@@ -2,47 +2,6 @@
 
 A React-based application for managing and tracking degree progress, featuring course management and degree planning capabilities.
 
-## Test Cases
-
-> **Important**: These test cases are implemented in the `sofia-use-cases` branch, not in the main branch. To test these features, make sure you checkout the correct branch:
-```bash
-git checkout sofia-use-cases
-```
-
-### Test Case 1: Completed Courses View
-- **Description**: User can view completed courses in their CS degree plan
-- **Test Steps**:
-  1. Launch the application
-  2. Log in using the credentials:
-     - Username: DegreePlanner
-     - Password: 123456
-  3. On the home dashboard, click "View Completed Courses"
-  4. Test the sorting functionality by clicking on:
-     - Course Name header (to sort alphabetically)
-     - Credit Hours header (to sort numerically)
-     - Semester Completed header (to sort chronologically)
-  5. Verify that:
-     - The table displays all completed courses
-     - Sorting works in both ascending and descending order
-     - The data is properly formatted and aligned
-
-### Test Case 2: Remaining Courses View
-- **Description**: User can view remaining courses in their CS degree plan
-- **Test Steps**:
-  1. Launch the application
-  2. Log in using the credentials:
-     - Username: DegreePlanner
-     - Password: 123456
-  3. On the home dashboard, click "View Remaining Courses"
-  4. Test the sorting functionality by clicking on:
-     - Course Name header (to sort alphabetically)
-     - Credit Hours header (to sort numerically)
-     - Course Level header (to sort by academic level)
-  5. Verify that:
-     - The table displays all remaining required courses
-     - Sorting works in both ascending and descending order
-     - Course levels are properly ordered (Freshman → Senior)
-
 ## Setup and Running Instructions
 
 ### Prerequisites
@@ -57,17 +16,16 @@ git clone <repository-url>
 cd blackhole
 ```
 
-2. Switch to the test cases branch:
-```bash
-git checkout sofia-use-cases
-```
 
-3. Install dependencies:
+
+2. Install dependencies:
 ```bash
 npm install
+pip install python3
+pip install -r requirements.txt
 ```
 
-4. Start the development server:
+3. Start the development server:
 ```bash
 npm start
 ```
@@ -75,13 +33,84 @@ npm start
 The application will open in your default browser at `http://localhost:3000`
 
 ### Login Credentials
-- Username: DegreePlanner
-- Password: 123456
+- Username: 2
+- Password: 2
 
-## Expected Test Results
+## Expected Results
 - Both tables should display properly formatted data
 - Sorting functionality should work smoothly in both directions
 - Tables should be responsive on different screen sizes
 - Course data should be accurately displayed
 - UI should maintain consistent dark theme styling
 - Sort indicators (arrows) should properly show current sort state
+
+
+## Test Cases
+
+## Backend Test Cases
+- **Description**: Total: 17 Test Cases
+- **Test Steps**:
+1. Run the test_cases.py file.
+```bash
+python test_cases.py
+```
+2. Expected Output: Python will output a message like:
+```bash
+Ran 17 tests in *seconds*
+OK
+```
+3. Check the function definitions in test_cases.py for details about each specific test case.
+
+### Database Test Cases 
+There are two test cases for the database under the \server directory:
+	- mixue_bao_test_case_1.py - used to run the test case for fetching all classes from MongoDB database
+	- mixue_bao_test_case_2.py - used to run the test case to fetch a single class from the MongoDB database with filter
+	
+Running these test cases will connect to the database, execute the query, and print the results.
+
+- **Test Steps**:
+1. to run Test Case 1, type in "python mixue_bao_test_case_1.py" in command line
+```bash
+python  mixue_bao_test_case_1.py
+```
+2. to run Test Case 2, type in "python mixue_bao_test_case_2.py" in command line
+```bash
+python mixue_bao_test_case_2.py
+```
+3. will need to wait a few seconds to connect to database in each test case
+	 
+### UI Test Cases
+
+## Test Case 1: Plan Schedule Selection
+- **Description**: User can view completed courses in their CS degree plan
+- **Test Steps**:
+  1. Launch the application
+  2. Log in using the credentials:
+     - Username: 2
+     - Password: 2
+  3. On the home dashboard, navigate to Plan Schedule.
+  4. Select courses taken.
+  5. Example Test Cases:
+     - Select all classes up to CS 3354.
+     - Sorting works in both ascending and descending order
+     - Select only freshman first-semester classes (up to CS 2305).
+
+### Test Case 2:Visual Flowchart View
+- **Description**: User can view a visual flowchart showcasing remaining classes in the degree plan.
+- **Test Steps**:
+  1. From the Plan Schedule interface, after selecting completed classes, choose Visual Flowchart.
+  2. Verify that the flowchart correctly highlights completed and remaining classes in a visual format.
+
+## Test Case 3: Completed and Remaining Classes Views
+- **Description**:User can view completed and remaining classes in separate, sortable tables. Remember to go back plan schedule if you want to recheck the functionality
+- **Test Steps**:
+  1. On the home dashboard, navigate to Plan Schedule.
+  2. Select classes taken
+  3. From the Plan Schedule interface:
+     - Click View Completed Classes to see all classes marked as completed.
+     - Click Remaining Classes to view courses still required for degree completion.
+  4. Verify 
+     - Each table displays the correct list of classes.
+     - Sorting functionality works for headers (e.g., Course Name, Credit Hours).
+     - Classes are accurately categorized as completed or remaining.
+     
