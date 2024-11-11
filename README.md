@@ -39,7 +39,7 @@ The application will open in your default browser at `http://localhost:3000`
 
 
 
-### Test Cases
+## Test Cases
 
 ## Backend Test Cases
 - **Description**: Total: 17 Test Cases
@@ -73,7 +73,7 @@ python mixue_bao_test_case_2.py
 ```
 3. will need to wait a few seconds to connect to database in each test case
 	 
-### UI Test Cases
+## UI Test Cases
 
 ## Test Case 1: Plan Schedule Selection
 - **Description**: User can view completed courses in their CS degree plan
