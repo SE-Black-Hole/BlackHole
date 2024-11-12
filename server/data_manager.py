@@ -3,6 +3,7 @@
 
 import config
 import pymongo
+import ssl
 
 from models import Course, Student
 
@@ -10,7 +11,7 @@ class DataManager:
 
 	def __init__(self):
 		print('Connecting to database...')
-		client = pymongo.MongoClient(config.mongo_url, config.mongo_port)
+		client = pymongo.MongoClient(config.mongo_url, config.mongo_port, tls=True, tlsAllowInvalidCertificates=True)
 		self.db = client[config.db_name]
 		
 		self.db.students.create_index([("username", pymongo.ASCENDING)], unique=True)
