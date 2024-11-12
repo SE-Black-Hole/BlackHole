@@ -11,8 +11,8 @@ print('Create student in database')
 print('----------------------')
 
 # change the username here for each new test since it must be unique each time
-username = "mixue_bao5"
-password = "abc123"
+username = "DegreePlanner4"
+password = "4"
 
 student = Student(username=username, password=password)
 dm.create_student(student)
@@ -29,7 +29,6 @@ print('\n----------------------')
 print('Update student in database')
 print('----------------------')
 
-student.coursesCompleted.append('CS3337')
 dm.update_student(student)
 print(str(student))
 
