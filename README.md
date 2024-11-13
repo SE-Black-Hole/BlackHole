@@ -65,9 +65,15 @@ Running these test cases will connect to the database, execute the query, and pr
 - **Test Steps**:
 1. to run Test Case 1, type in "python mixue_bao_test_case_1.py" in command line
 ```bash
+cd server
+```
+```bash
 python  mixue_bao_test_case_1.py
 ```
 2. to run Test Case 2, type in "python mixue_bao_test_case_2.py" in command line
+```bash
+cd server
+```
 ```bash
 python mixue_bao_test_case_2.py
 ```
