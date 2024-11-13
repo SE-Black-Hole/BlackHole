@@ -4,7 +4,7 @@ class Semester:
     semester_names = ["Fall", 'Spring', 'Summer']
     index = 0
     year = 2024
-    def  __init__(self, min_credit_hours=0, max_credit_hours=19,locked=False, skip_semester=False):
+    def  __init__(self, min_credit_hours=0, max_credit_hours=16,locked=False, skip_semester=False):
         self.max_credit_hours = max_credit_hours
         self.required_courses = []
         self.courses_avail = []
@@ -19,8 +19,9 @@ class Semester:
         self.can_make_schedule = False
         self.courses_num = int(self.min_credit_hours/3)
         self.max_index_before_locked = 0
-        self.coreqs_num = 2
+        self.coreqs_num = 0
         self.coreq_index = []
+        self.contains_coreqs = False
 
         self.semester_name = Semester.semester_names[Semester.index] + " " + str(Semester.year)
         Semester.index = (Semester.index + 1) % 3
@@ -50,31 +51,14 @@ class Semester:
                         return courses_to_update
                     
             
-            if len(self.coreqs_duo) and len(self.required_courses) + self.coreqs_num <=self.courses_num:
-                print("error")
-                self.can_make_schedule = False
-                for course in self.current_courses:
-                        courses_to_update += course.take_drop()
-                self.current_courses = []
-                # if self.coreqs_num != len(self.coreq_index):
-                #     for i in range(self.coreqs_num,-1,-1):
+            if self.contains_coreqs:
+                self.coreq_schedule()
 
-                # while not self.locked and self.can_make_schedule: #add iteration for coreq courses adjust for locked courses
-                #     i = 0
-                #     while i < len(self.index_courses) - self.max_index_before_locked:
-                #         if len(self.courses_avail) - (i + 1) - self.index_courses[i] > 0:
-                #             courses_to_update += self.current_courses[i].take_drop()
-                #             self.current_credit_hours -= self.current_courses[i] - self.courses_avail[self.index_courses[i] + 1]
-                #             self.index_courses[i] += 1
-                #             self.current_courses[i] = self.courses_avail[self.index_courses[i]]
-                #             courses_to_update += self.current_courses[i].take_drop() 
-                #             courses_to_update += self.reset(i)
-                #             i = 0
-                #         else:
-                #             i += 1
+                
             else:
                 self.courses_num += 1
-                self.coreqs_num = 2
+                if self.contains_coreqs:
+                    self.coreqs_num = 0
                 if self.can_return_this_size and self.courses_num <= len(self.courses_avail):
                     self.can_return_this_size = False
                     self.index_courses = [i for i in range(self.courses_num, -1, -1)]
@@ -99,11 +83,27 @@ class Semester:
 
         return courses_to_update
 
+    def coreq_schedule(self):
+        if not self.coreqs_num or self.coreqs_index[- 1] == len(self.coreqs_duo) - self.coreqs_num/2:
+            self.coreqs_num += 2
+            if self.coreqs_num + len(self.required_courses) > self.courses_num:
+                return
+            # set up a new list
+            for i in self.coreq_index:
+                pass
+            for i in range(self.coreqs_num/2, -1, -1):
+                pass
+        else:
+            coreqs_to_update = 0
+            for i in range(self.coreq_index):
+                if self.coreq_index[i] < len(self.coreqs_duo) - 1 - i:
+                    self.coreq_index[i] += 1
+                    self.reset_coreq(i)
+                    coreqs_to_update = i
+
     def reset(self, index):
         courses_to_update = []
 
-        if self.index_courses[index] + 1 >= self.index_courses[index]:
-            return courses_to_update
         
         for i in range(index - 1, -1,-1):
             courses_to_update += self.current_courses[i].take_drop()
@@ -114,6 +114,14 @@ class Semester:
 
 
         return courses_to_update
+    
+    def reset_coreq (self,index):
+        if self.coreq_index[index] + 1 >= self.coreq_index[index]:
+            return 
+        
+        for i in range(index - 1, -1,-1):
+            self.coreq_index[i] = self.coreq_index[i + 1] + 1
+
     def get_current_courses(self):
         arr = list(self.current_courses)
         for i in range(len(arr)):
@@ -154,7 +162,9 @@ class Semester:
                 if course.check_if_coreq_available():
                     self.coreqs_duo.append([course, course.coOf[0]])
             # if len(self.coreqs_duo):
-        
+            if len(self.coreqs_duo):
+                self.contains_coreqs = True
+
             for i in range(self.courses_num, -1,-1):
                 self.index_courses.append(i)
                 self.current_courses.append(self.courses_avail[i])
@@ -163,16 +173,6 @@ class Semester:
             self.current_courses = []
         return courses_to_update
 
-    
-
-    def remove_nodes(self, nodes):
-        self.current_credit_hours -= sum([course.credits for course in nodes])
-        to_update = []
-        for node in nodes:
-            self.courses.remove(node)
-            to_update += node.take_drop()
-
-        return to_update
 
     def add_required_courses(self,nodes):
         self.current_credit_hours += sum([course.credits for course in nodes])
