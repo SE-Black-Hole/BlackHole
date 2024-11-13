@@ -208,7 +208,10 @@ class TestSemester(unittest.TestCase):
         cs3345.pre.append(cs2305)
         cs2305.preOf.append(cs3345)
         cs3341.preOf.append(cs3345)
+        cs3345.pre.append(cs3341)
         cs2336.preOf.append(cs3345)
+        cs3345.pre.append(cs2336)
+
         cs2305.update_semesters_required_all()
         poset = Poset([cs3345,cs3354,cs2305,cs3341,cs2336],[], [])
         semester = Semester(min_credit_hours=0)
@@ -228,7 +231,7 @@ class TestSemester(unittest.TestCase):
         cs2305.preOf.append(cs3345)
         cs2305.update_semesters_required_all()
         poset = Poset([cs3345,cs3354,cs2305],[], [])
-        semester = Semester(min_credit_hours=0)
+        semester = Semester(min_credit_hours=3)
         to_update = semester.set_courses_avail(poset.courses_by_time[0])
         for i in range(len(to_update)):
             to_update[i] = to_update[i].classNumber

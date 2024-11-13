@@ -103,6 +103,9 @@ class Node(object):
     def set_required_by_user(self):
         self.required_by_user = not self.required_by_user
 
+    def mark_as_taken_dropped(self):
+        self.taken = not self.taken
+
     def take_drop(self):
         course_to_update = []
         semesters_required = self.semesters_required
@@ -117,7 +120,7 @@ class Node(object):
         else: 
             print("error for course: %s"% (self.classNumber))
             return
-        self.taken = not self.taken
+        
         if self.updated:
             course_to_update.append(self)
             self.updated = False
@@ -133,20 +136,3 @@ class Node(object):
         return self.classNumber + " " + str(self.credits) + ", Pre: " + \
         str([str(n.classNumber) for n in self.pre ]) + ", co: " + str([str(n.classNumber) for n in self.co ]) + \
         ", preOf:" + str([str(n.classNumber) for n in self.preOf ]) + ", coOf:" + str([str(n.classNumber) for n in self.coOf ]) + ", " + str(self.semesters_required) + ", " + str(self.isMajorElective)
-
-
-# cs3354 = Node("CS3354")
-# ece2390 = Node("ECE2390")
-# cs3345 = Node("CS3345")
-# cs3345.preOf.append(cs3354)
-# cs3354.pre.append(cs3345)
-# cs3354.pre.append(ece2390)
-# ece2390.preOf.append(cs3354)
-# cs3354.co.append(ece2390)
-# ece2390.coOf.append(cs3354)
-# ece2390.set_semesters_required()
-# cs3345.set_semesters_required()
-# poset = Poset([cs3345,cs3354,ece2390],[Node("CS4365")], [Node("HIST1302")])
-# expected = "CS3345 3, Pre: [], co: [], preOf:['CS335[301 chars]\n\n"
-# actual = str(poset)
-# print(poset)
