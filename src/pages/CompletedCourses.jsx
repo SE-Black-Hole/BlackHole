@@ -1,16 +1,3 @@
-// Sofia Deichert - Test Case 1
-
-// Test Case Description: User can view completed courses in their CS degree plan
-
-// This component implements a sortable table displaying completed courses in a CS degree plan.
-
-// The table allows sorting by
-// 1) course name
-// 2) credit hours
-// 3) semester completed
-
-// The component includes sample data and maintains consistent styling with the app's dark theme.
-
 import React, { useEffect, useState } from 'react';
 import { ChevronUp, ChevronDown } from 'lucide-react';
 
@@ -20,9 +7,10 @@ const CompletedCourses = () => {
 
   const fetchCompletedCourses = async () => {
     try {
-      const response = await fetch('http://localhost:5000/get-student-courses');
+      const response = await fetch('http://localhost:5000/get-completed-courses');
       if (response.ok) {
         const data = await response.json();
+        console.log(data);
         setCourses(data.completed_courses_details);
       } else {
         console.error('Failed to fetch completed courses');

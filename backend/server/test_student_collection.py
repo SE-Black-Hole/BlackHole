@@ -22,7 +22,7 @@ if isinstance(completed_courses, list):
     else:
         print(f"No completed courses found for {username}.")
 elif isinstance(completed_courses, tuple) and completed_courses[1] == 404:
-    print(completed_courses[0])  # Print the error message
+    print(completed_courses[0]) 
 else:
     print("An unexpected error occurred.")
 

@@ -11,7 +11,6 @@ const AccountSettings = ({ onLogout }) => {
 
   const handlePasswordChange = (e) => {
     e.preventDefault();
-    // TODO: Implement API call to change password
     if (newPassword !== confirmPassword) {
       alert('New passwords do not match');
       return;
@@ -28,7 +27,6 @@ const AccountSettings = ({ onLogout }) => {
 
   const handleUsernameChange = (e) => {
     e.preventDefault();
-    // TODO: Implement API call to change username
     if (newUsername.trim() === '') {
       alert('Please enter a new username');
       return;
@@ -42,7 +40,6 @@ const AccountSettings = ({ onLogout }) => {
       'Are you sure you want to delete your account? This action cannot be undone.'
     );
     if (confirmed) {
-      // TODO: Implement API call to delete account
       alert('Account deleted successfully');
       onLogout();
       navigate('/');
@@ -82,7 +79,6 @@ const AccountSettings = ({ onLogout }) => {
               </form>
             </div>
 
-            {/* Change Password Section */}
             <div className="space-y-4">
               <h2 className="text-xl text-white font-medium">
                 Change Password
@@ -124,7 +120,6 @@ const AccountSettings = ({ onLogout }) => {
               </form>
             </div>
 
-            {/* Delete Account Section */}
             <div className="space-y-4">
               <h2 className="text-xl text-white font-medium">Delete Account</h2>
               <p className="text-gray-400">

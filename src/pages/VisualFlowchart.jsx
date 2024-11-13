@@ -7,7 +7,6 @@ const Flowchart = () => {
     const location = useLocation();
     const remainingCourses = location.state?.remainingCourses || [];
 
-    // Generate nodes and edges based on remaining courses
     const nodes = useMemo(
         () =>
             remainingCourses.map((course, index) => ({
@@ -19,7 +18,6 @@ const Flowchart = () => {
         [remainingCourses]
     );
 
-    // Define a basic sequential edge structure for demonstration
     const edges = useMemo(
         () =>
             remainingCourses.slice(1).map((course, index) => ({
