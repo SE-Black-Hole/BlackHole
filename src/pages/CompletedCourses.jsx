@@ -11,15 +11,30 @@
 
 // The component includes sample data and maintains consistent styling with the app's dark theme.
 
-import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
 import { ChevronUp, ChevronDown } from 'lucide-react';
 
 const CompletedCourses = () => {
-  const location = useLocation();
-  const initialCourses = location.state?.completedCourses || [];
-  const [courses, setCourses] = useState(initialCourses);
+  const [courses, setCourses] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
+
+  const fetchCompletedCourses = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/get-student-courses');
+      if (response.ok) {
+        const data = await response.json();
+        setCourses(data.completed_courses_details);
+      } else {
+        console.error('Failed to fetch completed courses');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCompletedCourses();
+  }, []);
 
   const parseSemester = (semesterString) => {
     const [year, semester] = semesterString.split(' ');
@@ -90,13 +105,13 @@ const CompletedCourses = () => {
             <tbody>
               {courses.map((course, index) => (
                 <tr
-                  key={course.courseNumber}
+                  key={course.classNumber}
                   className={`${index % 2 === 0 ? 'bg-gray-800/30' : 'bg-gray-800/10'} hover:bg-gray-700/30 transition-colors border-b border-gray-700/50`}
                 >
                   <td className="px-6 py-4 text-sm text-gray-300">{course.classNumber}</td>
                   <td className="px-6 py-4 text-sm text-gray-300">{course.className}</td>
                   <td className="px-6 py-4 text-sm text-gray-300">{course.creditHours}</td>
-                  </tr>
+                </tr>
               ))}
             </tbody>
           </table>

@@ -112,23 +112,73 @@ const PlanSchedule = () => {
         return randomElectives;
     };
 
+    const sendCoursesToBackend = async (completedCoursesList, remainingCoursesList) => {
+        console.log("Completed Courses:", completedCoursesList);
+    console.log("Remaining Courses:", remainingCoursesList);
+        try {
+            const response = await fetch('http://localhost:5000/update-student-courses', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: 'DegreePlanner1',
+                    completed_courses: completedCoursesList,
+                    remaining_courses: remainingCoursesList
+                })
+            });
+            if (!response.ok) {
+                throw new Error('Failed to send courses to the backend');
+            }
+            console.log('Courses sent to backend successfully');
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     const handleGenerateFlowchartClick = () => {
         const uncompletedMainCourses = mainCourses.filter(course => !completedCourses.has(course.classNumber));
         const randomGuidedElectives = getRandomGuidedElectives(4);
         const flowchartCourses = [...uncompletedMainCourses, ...randomGuidedElectives];
+        sendCoursesToBackend(Array.from(completedCourses), flowchartCourses);
+
         navigate('/flowchart', { state: { remainingCourses: flowchartCourses } });
     };
 
-    const handleViewRemainingClick = () => {
-        const remainingCourses = mainCourses.concat(guidedElectives).filter(course => !completedCourses.has(course.classNumber));
-        navigate('/remaining-courses', { state: { remainingCourses } });
-    };
-
-    const handleViewCompletedClick = () => {
+    const handleViewCourses = (type) => {
+        // Get completed courses
         const completedCoursesList = Array.from(completedCourses).map(courseNumber => 
             mainCourses.concat(guidedElectives).find(course => course.classNumber === courseNumber)
         ).filter(Boolean);
-        navigate('/completed-courses', { state: { completedCourses: completedCoursesList } });
+    
+        // Get uncompleted main courses
+        const uncompletedMainCourses = mainCourses.filter(course => !completedCourses.has(course.classNumber));
+    
+        // Get 4 random guided electives that are not completed
+        const randomGuidedElectives = getRandomGuidedElectives(4);
+    
+        // Combine uncompleted main courses with the 4 random guided electives
+        const remainingCourses = [...uncompletedMainCourses, ...randomGuidedElectives];
+    
+        // Send both lists to the backend
+        sendCoursesToBackend(completedCoursesList, remainingCourses);
+    
+        // Navigate to the appropriate page based on type
+        if (type === 'completed') {
+            navigate('/completed-courses', { state: { completedCourses: completedCoursesList } });
+        } else if (type === 'remaining') {
+            navigate('/remaining-courses', { state: { remainingCourses } });
+        }
+    };
+    
+    
+
+    const handleViewRemainingClick = () => {
+        handleViewCourses('remaining');
+    };
+    
+    const handleViewCompletedClick = () => {
+        handleViewCourses('completed');
     };
     
     return (
