@@ -12,3 +12,10 @@ class Course(BaseModel):
 	prerequisites: List[str] = []
 	corequisites: List[str] = []
 	isMajorElective: bool = False
+	
+class Student(BaseModel):
+	_id: str
+	username: str
+	password: str
+	coursesCompleted: List[str] = []
+	coursesRemaining: List[str] = []

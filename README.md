@@ -1,71 +1,119 @@
-# BlackHole
-# Getting Started with Create React App
+# Automatic Degree Planner
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A React-based application for managing and tracking degree progress, featuring course management and degree planning capabilities.
 
-## Available Scripts
+## Setup and Running Instructions
 
-In the project directory, you can run:
+### Prerequisites
+- Node.js (latest stable version)
+- npm (comes with Node.js)
 
-### `npm start`
+### Installation
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd blackhole
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
 
-### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+2. Install dependencies:
+```bash
+npm install
+pip install python3
+pip install -r requirements.txt
+```
 
-### `npm run build`
+3. Start the development server:
+```bash
+npm run start
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+The application will open in your default browser at `http://localhost:3000`
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Login Credentials
+- Username: 2
+- Password: 2
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Test Cases
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+# Backend Test Cases
+- **Description**: Total: 17 Test Cases
+- **Test Steps**:
+1. Run the test_cases.py file.
+   ```bash
+cd backend
+```
+```bash
+python test_cases.py
+```
+2. Expected Output: Python will output a message like:
+```bash
+Ran 17 tests in *seconds*
+OK
+```
+3. Check the function definitions in test_cases.py for details about each specific test case.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+# Database Test Cases 
+There are two test cases for the database under the \server directory:
+	- mixue_bao_test_case_1.py - used to run the test case for fetching all classes from MongoDB database
+	- mixue_bao_test_case_2.py - used to run the test case to fetch a single class from the MongoDB database with filter
+	
+Running these test cases will connect to the database, execute the query, and print the results.
 
-## Learn More
+- **Test Steps**:
+1. to run Test Case 1, type in "python mixue_bao_test_case_1.py" in command line
+```bash
+cd server
+```
+```bash
+python  mixue_bao_test_case_1.py
+```
+2. to run Test Case 2, type in "python mixue_bao_test_case_2.py" in command line
+```bash
+cd server
+```
+```bash
+python mixue_bao_test_case_2.py
+```
+3. will need to wait a few seconds to connect to database in each test case
+	 
+## UI Test Cases
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+# Test Case 1: Plan Schedule Selection
+- **Description**: User can view completed courses in their CS degree plan
+- **Test Steps**:
+  1. Launch the application
+  2. Log in using the credentials:
+     - Username: 2
+     - Password: 2
+  3. On the home dashboard, navigate to Plan Schedule.
+  4. Select courses taken.
+  5. Example Test Cases:
+     - Select all classes up to CS 3354.
+     - Sorting works in both ascending and descending order
+     - Select only freshman first-semester classes (up to CS 2305).
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+# Test Case 2:Visual Flowchart View
+- **Description**: User can view a visual flowchart showcasing remaining classes in the degree plan.
+- **Test Steps**:
+  1. From the Plan Schedule interface, after selecting completed classes, choose Visual Flowchart.
+  2. Verify that the flowchart correctly highlights completed and remaining classes in a visual format.
 
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+# Test Case 3: Completed and Remaining Classes Views
+- **Description**:User can view completed and remaining classes in separate, sortable tables. Remember to go back plan schedule if you want to recheck the functionality
+- **Test Steps**:
+  1. On the home dashboard, navigate to Plan Schedule.
+  2. Select classes taken
+  3. From the Plan Schedule interface:
+     - Click View Completed Classes to see all classes marked as completed.
+     - Click Remaining Classes to view courses still required for degree completion.
+  4. Verify 
+     - Each table displays the correct list of classes.
+     - Sorting functionality works for headers (e.g., Course Name, Credit Hours).
+     - Classes are accurately categorized as completed or remaining.
+     
