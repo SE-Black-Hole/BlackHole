@@ -45,6 +45,9 @@ The application will open in your default browser at `http://localhost:3000`
 - **Description**: Total: 17 Test Cases
 - **Test Steps**:
 1. Run the test_cases.py file.
+   ```bash
+cd backend
+```
 ```bash
 python test_cases.py
 ```
