@@ -50,7 +50,7 @@ const CompletedCourses = () => {
     <div className="min-h-screen w-full bg-gradient-to-br from-black via-gray-900 to-gray-800 p-8">
       <div className="backdrop-blur-sm bg-white/10 rounded-lg shadow-2xl border border-gray-700 overflow-hidden">
         <div className="bg-gradient-to-r from-black to-gray-800 px-8 py-6">
-          <h1 className="text-white text-2xl font-bold">Completed Courses</h1>
+          <h1 className="text-white text-2xl font-bold">Remaining Courses</h1>
         </div>
         <div className="p-6 overflow-x-auto">
           <table className="w-full">
