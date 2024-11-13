@@ -1,14 +1,12 @@
-# api.py
-
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from pymongo.errors import DuplicateKeyError
-from data_manager import DataManager  # Import the DataManager
-from models import Student  # Import the Student model
+from data_manager import DataManager  
+from models import Student  
 
 app = Flask(__name__)
 CORS(app, origins=["http://localhost:3000"])
-data_manager = DataManager()  # Initialize DataManager with MongoDB connection
+data_manager = DataManager()  
 
 @app.route('/update-student-courses', methods=['POST', 'OPTIONS'])
 def update_student_courses():
@@ -19,11 +17,9 @@ def update_student_courses():
     completed_courses = data.get("completed_courses")
     remaining_courses = data.get("remaining_courses")
     
-    # Ensure that necessary data is present
     if not username or completed_courses is None or remaining_courses is None:
         return jsonify({"error": "Missing username, completed_courses, or remaining_courses"}), 400
 
-    # Call DataManager method to update the student's courses
     try:
         modified_count = data_manager.update_student_courses(username, completed_courses, remaining_courses)
         if modified_count:
@@ -33,19 +29,34 @@ def update_student_courses():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@app.route('/get-student-courses', methods=['GET', 'OPTIONS'])
-def get_student_courses():
-    username = "DegreePlanner1"
-    
-    if not username:
-        return jsonify({"error": "Missing username"}), 400
-
+@app.route('/get-completed-courses', methods=['GET', 'OPTIONS'])
+def get_completed_courses():
     try:
-        result = data_manager.get_completed_courses(username)
-        print("Fetched Courses:", result)
-        return jsonify(result), 200
+        result = data_manager.get_courses_completed_by_username()
+        
+        if result is None:
+            return jsonify({"message": "Student not found"}), 404
+        elif result:  
+            return jsonify({"completed_courses_details": result}), 200
+        else:
+            return jsonify({"message": "No completed courses found for this student."}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+@app.route('/get-remaining-courses', methods=['GET', 'OPTIONS'])
+def get_remaining_courses():
+    try:
+        result = data_manager.get_courses_remaining_by_username()
+        
+        if result is None:
+            return jsonify({"message": "Student not found"}), 404
+        elif result:  
+            return jsonify({"remaining_courses_details": result}), 200
+        else:
+            return jsonify({"message": "No completed courses found for this student."}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True)

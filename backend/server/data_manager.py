@@ -1,20 +1,20 @@
 # Author: Mixue Bao
 # Description: Connect to database (MongoDB) and fetch data
-
 import pymongo
 from pymongo import MongoClient
 from typing import List, Dict
 import ssl
-from models import Course, Student  # Assuming these are defined elsewhere
-import config  # Assuming this contains mongo_url, mongo_port, and db_name
+from models import Course, Student  
+import config  
 
 class DataManager:
     def __init__(self):
         print('Connecting to database...')
         client = MongoClient(config.mongo_url, config.mongo_port, tls=True, tlsAllowInvalidCertificates=True)
         self.db = client[config.db_name]
+        students_collection = self.db['CS3354_Project_Group4.students']  
+
         
-        # Ensure unique index on the username field
         self.db.students.create_index([("username", pymongo.ASCENDING)], unique=True)
         print('Connection successful!')
         
@@ -47,37 +47,25 @@ class DataManager:
             }},
             upsert=True
         )
-    def get_completed_courses(self, username: str) -> list:
-
-        # Fetch student by username
-        student = self.db.students.find_one({"username": username})
+    def get_courses_completed_by_username(self) -> List[str]:
+        username = "DegreePlanner1"
+        result = self.db.students.find_one({"username": username})
     
-        if not student:
-        # Return an error if student not found
-            return {"error": "Student not found"}, 404
-
-    # Use the correct field names from the Student model
-        completed_courses = student.get('coursesCompleted', [])
-        all_courses = student.get('coursesRemaining', [])  # Assuming this field contains all course details
-
-        if not completed_courses:
-            print(f"No completed courses found for {username}.")
+        if result:
+            return result.get("coursesCompleted", [])
+        else:
+            print("Student not found")
             return []
-
-        if not all_courses:
-            print(f"No courses found in the student's record for {username}.")
+    
+    def get_courses_remaining_by_username(self) -> List[str]:
+        username = "DegreePlanner1"
+        result = self.db.students.find_one({"username": username})
+    
+        if result:
+            return result.get("coursesRemaining", [])
+        else:
+            print("Student not found")
             return []
-
-    # Fetch details of only completed courses
-        completed_courses_details = [
-            course for course in all_courses if course['classNumber'] in completed_courses
-        ]
-
-    # Debug statements to check values
-        print(f"Completed Courses for {username}: {completed_courses}")
-
-        return completed_courses_details
 
     
         
-        return result.modified_count  # Return the number of modified documents to confirm success

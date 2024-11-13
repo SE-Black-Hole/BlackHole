@@ -29,12 +29,10 @@ const Header = ({ onLogout }) => {
       <header className="fixed top-0 left-0 right-0 bg-black h-20 z-50">
         <div className="h-full w-full px-8">
           <div className="flex items-center justify-between h-full">
-            {/* Logo/Title */}
             <div className="flex-1">
               <h1 className="text-white text-2xl font-bold">Black Hole</h1>
             </div>
 
-            {/* Desktop Navigation */}
             <nav className="hidden md:flex space-x-8 flex-1 justify-end items-center">
               {links.map((link) => (
                 <Link
@@ -46,7 +44,6 @@ const Header = ({ onLogout }) => {
                 </Link>
               ))}
 
-              {/* User Profile Dropdown */}
               <div className="relative">
                 <button
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -55,7 +52,6 @@ const Header = ({ onLogout }) => {
                   <User className="h-6 w-6" />
                 </button>
 
-                {/* Dropdown Menu */}
                 {isDropdownOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg py-1 border border-gray-700">
                     <Link
@@ -81,7 +77,6 @@ const Header = ({ onLogout }) => {
               </div>
             </nav>
 
-            {/* Mobile Menu Button */}
             <button
               className="md:hidden text-white p-2 ml-4"
               onClick={toggleMenu}
@@ -97,7 +92,6 @@ const Header = ({ onLogout }) => {
         </div>
       </header>
 
-      {/* Mobile Menu Overlay */}
       {isMenuOpen && (
         <div className="fixed inset-0 bg-black z-40">
           <div className="pt-20 px-8">
