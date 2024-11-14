@@ -32,9 +32,7 @@ class Semester:
         while not self.locked and self.can_make_schedule: #add iteration for coreq courses adjust for locked courses
             i = 0
             while i < len(self.index_courses) - self.max_index_before_locked - self.coreqs_num:
-                if self.courses_avail(self.index_courses[i] + 1).semesters_required == -2 or self.courses_avail(self.index_courses[i] + 1).semesters_required == 1:
-                    self.index_courses[i] += 1
-                elif len(self.courses_avail) - (i + 1) - self.index_courses[i] > 0:
+                if len(self.courses_avail) - (i + 1) - self.index_courses[i] > 0:
                     self.current_credit_hours -= self.current_courses[i].credits - self.courses_avail[self.index_courses[i] + 1].credits
                     self.index_courses[i] += 1
                     self.current_courses[i] = self.courses_avail[self.index_courses[i]]
@@ -47,12 +45,12 @@ class Semester:
                     self.can_return_this_size = True                        
                     return self.get_courses_to_update()
                 
-            if self.coreqs_num_total:
-                self.coreq_schedule()
+            # if self.coreqs_num_total:
+            #     self.coreq_schedule()
 
             self.courses_num += 1
-            if self.coreqs_num_total:
-                self.coreqs_num = 0
+            # if self.coreqs_num_total:
+            #     self.coreqs_num = 0
 
             if self.can_return_this_size and self.courses_num <= len(self.courses_avail):
                 self.can_return_this_size = False
@@ -149,6 +147,7 @@ class Semester:
 
     def set_courses_avail(self, courses_avail): # TODO make it use the method above and check for sum_all_classes > min
         self.courses_avail = list(courses_avail)
+        self.can_make_schedule = False
         
         if self.min_credit_hours <= sum([n.credits for n in self.courses_avail]) and min([True] + [(i in self.courses_avail) for i in self.required_courses]):
             self.can_make_schedule = True

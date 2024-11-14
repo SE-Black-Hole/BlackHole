@@ -85,7 +85,7 @@ class Node(object):
             if self.updated:
                 updated_courses.append(self)
                 self.updated = False
-            self.previous_semesters_required = semesters_required
+                self.previous_semesters_required = semesters_required
             for course in self.preOf:
                 course.update_semesters_required(updated_courses)
 
@@ -107,7 +107,7 @@ class Node(object):
         self.taken = not self.taken
 
     def take_drop(self):
-        course_to_update = []
+        courses_to_update = []
         semesters_required = self.semesters_required
         if not self.semesters_required:
             self.semesters_required = -1
@@ -122,12 +122,12 @@ class Node(object):
             return
         
         if self.updated:
-            course_to_update.append(self)
+            courses_to_update.append(self)
             self.updated = False
             self.previous_semesters_required = semesters_required
         for course in self.preOf:
-            course.update_semesters_required(course_to_update)
-        return course_to_update
+            course.update_semesters_required(courses_to_update)
+        return courses_to_update
             
     def set_locked(self):
         self.locked = not self.locked
