@@ -113,7 +113,7 @@ const PlanSchedule = () => {
     };
 
     const sendCoursesToBackend = async (completedCoursesList, remainingCoursesList) => {
-        console.log("Completed Courses:", completedCoursesList);
+    console.log("Completed Courses:", completedCoursesList);
     console.log("Remaining Courses:", remainingCoursesList);
         try {
             const response = await fetch('http://localhost:5000/update-student-courses', {
@@ -146,24 +146,35 @@ const PlanSchedule = () => {
     };
 
     const handleViewCourses = (type) => {
-        const completedCoursesList = Array.from(completedCourses).map(courseNumber => 
-            mainCourses.concat(guidedElectives).find(course => course.classNumber === courseNumber)
-        ).filter(Boolean);
+        const completedCoursesList = Array.from(completedCourses)
+            .map(courseNumber => {
+                const course = mainCourses.concat(guidedElectives).find(course => course.classNumber === courseNumber);
+                if (course) {
+                    return {
+                        className: course.className,
+                        classNumber: course.classNumber,
+                        creditHours: course.creditHours,
+                    };
+                }
+                return null; 
+            })
+            .filter(Boolean);
     
         const uncompletedMainCourses = mainCourses.filter(course => !completedCourses.has(course.classNumber));
     
         const randomGuidedElectives = getRandomGuidedElectives(4);
     
         const remainingCourses = [...uncompletedMainCourses, ...randomGuidedElectives];
-    
-        sendCoursesToBackend(completedCoursesList, remainingCourses);
-    
+        
+        sendCoursesToBackend(completedCoursesList, remainingCourses); // Send completedCoursesList with className, classNumber, creditHours
+        
         if (type === 'completed') {
             navigate('/completed-courses', { state: { completedCourses: completedCoursesList } });
         } else if (type === 'remaining') {
             navigate('/remaining-courses', { state: { remainingCourses } });
         }
     };
+    
     
     
 
