@@ -9,6 +9,15 @@ class Poset(object):
         self.all = required + electives + core
         self.total_classes = len(self.all)
         self.courses_by_time = self.create_separate_courses_by_time()
+        self.total_credits = self.get_total_credits()
+
+    # def return_to_default_
+    def get_total_credits(self):
+        credits_total = 0
+        for i in self.requiredByDegree:
+            credits_total += i.credits
+
+        return credits_total
 
     def fetch(self, classNumber):
         for node in self.all:
@@ -30,7 +39,7 @@ class Poset(object):
         return courses_by_time
     def update_semesters_required(self,courses):
         for course in courses:
-            if not course.updated:
+            if not course.updated and course in self.courses_by_time[course.previous_semesters_required]:
                 self.courses_by_time[course.previous_semesters_required].remove(course)
                 self.courses_by_time[course.semesters_required].append(course)
                 course.update()
@@ -81,11 +90,10 @@ class Node(object):
         semesters_required = self.semesters_required
         new_index = max(self.pre,key=lambda course: course.semesters_required).semesters_required + 1
         self.semesters_required = 0 if new_index < 0 else new_index
-        if (semesters_required != self.semesters_required):
-            if self.updated:
-                updated_courses.append(self)
-                self.updated = False
-                self.previous_semesters_required = semesters_required
+        if self.updated:
+            updated_courses.append(self)
+            self.updated = False
+            self.previous_semesters_required = semesters_required
             for course in self.preOf:
                 course.update_semesters_required(updated_courses)
 
@@ -125,8 +133,8 @@ class Node(object):
             courses_to_update.append(self)
             self.updated = False
             self.previous_semesters_required = semesters_required
-        for course in self.preOf:
-            course.update_semesters_required(courses_to_update)
+            for course in self.preOf:
+                course.update_semesters_required(courses_to_update)
         return courses_to_update
             
     def set_locked(self):

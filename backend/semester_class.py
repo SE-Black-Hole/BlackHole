@@ -10,19 +10,20 @@ class Semester:
         self.courses_avail = []
         self.current_courses = []
         self.previous_courses = []
-        self.locked = locked
         self.current_credit_hours = 0
-        self.min_credit_hours = min_credit_hours
-        self.skip_semester = skip_semester
-        self.can_return_this_size = False
+        
         self.index_courses = []
         self.coreqs_duo = []
         self.can_make_schedule = False
+        self.min_credit_hours = min_credit_hours
         self.courses_num = int(self.min_credit_hours/3)
         self.max_index_before_locked = 0
         self.coreqs_num = 0
         self.coreqs_index = []
         self.coreqs_num_total = 0
+        self.locked = locked
+        self.skip_semester = skip_semester
+        self.can_return_this_size = False
 
         self.semester_name = Semester.semester_names[Semester.index] + " " + str(Semester.year)
         Semester.index = (Semester.index + 1) % 3
@@ -102,10 +103,7 @@ class Semester:
         if coreq_can_update:
             for i in range(self.max_index_before_locked, len(self.index_courses)):
                 pass
-        return False
-
-
-        
+        return False        
 
     def reset(self, index):
         
@@ -146,9 +144,19 @@ class Semester:
         self.max_index_before_locked = len(self.required_courses)
 
     def set_courses_avail(self, courses_avail): # TODO make it use the method above and check for sum_all_classes > min
+        self.current_courses = []
+        self.previous_courses = []
+        self.current_credit_hours = 0
+        self.index_courses = []
+        self.coreqs_duo = []
         self.courses_avail = list(courses_avail)
         self.can_make_schedule = False
-        
+
+        if not len(courses_avail):
+            return []
+        self.courses_num = min (int(self.min_credit_hours/3), len(courses_avail))
+        self.index_courses = []
+
         if self.min_credit_hours <= sum([n.credits for n in self.courses_avail]) and min([True] + [(i in self.courses_avail) for i in self.required_courses]):
             self.can_make_schedule = True
             for index in range(len(self.required_courses)):
@@ -156,7 +164,7 @@ class Semester:
                 self.courses_avail[index], self.courses_avail[old_index] = self.courses_avail[old_index], self.courses_avail[index]
             
 
-        if self.can_make_schedule:
+        if self.can_make_schedule: #TODO make it work with coreqs and classes avail size = 1
             for course in self.courses_avail:
                 if course.check_if_coreq_available():
                     self.coreqs_duo.append([course, course.coOf[0]])

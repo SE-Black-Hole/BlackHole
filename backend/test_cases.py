@@ -2,6 +2,10 @@ import unittest
 from poset import Node, Poset
 from semester_class import Semester
 from degree_generator import Generator
+import sys
+sys.path.insert(1, 'C:\\Users\\ianvi\\Documents\\GitHub\\BlackHole\\backend\\server') 
+from data_manager import DataManager
+import pickle
 
 class TestNode(unittest.TestCase):
     """ Tests for class node"""
@@ -287,24 +291,8 @@ class TestSemester(unittest.TestCase):
         self.assertEqual(expected, actual,"Error")
 
 class TestDegreeGenerator(unittest.TestCase):
-    
-    def test_generate(self): # 16
-        """Test generate method returning a simple plan"""
-        cs3354 = Node("CS3354")
-        cs2305 = Node("CS2305")
-        cs3345 = Node("CS3345")
-        cs3345.preOf.append(cs3354)
-        cs3354.pre.append(cs3345)
-        cs3345.pre.append(cs2305)
-        cs2305.preOf.append(cs3345)
-        cs2305.update_semesters_required_all()
-        poset = Poset([cs3345,cs3354,cs2305],[], [])
-        generator = Generator(poset,0,3,[],[])
-        expected = [[['CS2305'], ['CS3345'], ['CS3354']]]
-        actual = generator.generate()
-        self.assertEqual(expected, actual,"Error")
 
-    def test_empty_lists(self): # 17
+    def test_empty_lists(self): # 16
         """ Test degree generator producing the correct number of empty lists"""
         cs3354 = Node("CS3354")
         cs2305 = Node("CS2305")
@@ -315,9 +303,51 @@ class TestDegreeGenerator(unittest.TestCase):
         cs2305.preOf.append(cs3345)
         cs2305.update_semesters_required_all()
         poset = Poset([cs3345,cs3354,cs2305],[], [])
-        generator = Generator(poset,0,3,[],[])
-        expected = [[], [], []]
+        generator = Generator(poset)
+        expected = [[]]
         actual = generator.get_new_empty_lists_per_semester()
         self.assertEqual(expected, actual,"Error")
+
+    def test_generate(self): # 17
+        """Test generate method returning a simple plan"""
+        cs3354 = Node("CS3354")
+        cs2305 = Node("CS2305")
+        cs3345 = Node("CS3345")
+        cs3345.preOf.append(cs3354)
+        cs3354.pre.append(cs3345)
+        cs3345.pre.append(cs2305)
+        cs2305.preOf.append(cs3345)
+        cs2305.update_semesters_required_all()
+        poset = Poset([cs3345,cs3354,cs2305],[], [])
+        # print(poset)
+        generator = Generator(poset)
+        expected = [[['CS2305'], ['CS3345'], ['CS3354']]]
+        actual = generator.generate_shortest_plans()
+        self.assertEqual(expected, actual,"Error")
+
+    # def test_generate_real_class(self): #18
+    #     """ Retrieving list of taken classes and generating plan with less deviation"""
+    #     dm = DataManager()
+    #     completed_courses = dm.get_courses_completed_by_username()
+    #     poset = None
+    #     with open("classObjects_data.pkl", 'rb') as inp:
+    #         poset = pickle.load(inp)
+    #         # print(poset)
+    #     classes_taken = []
+    #     for course in completed_courses:
+    #         classes_taken.append(poset.fetch(course.replace(" ", "")))
+
+    #     print(completed_courses)
+    #     print(classes_taken)
+
+    #     g = Generator(poset)
+    #     g.update_poset(classes_taken)
+
+    #     print(g.get_smallest_deviation_plan())
+
+
+    #     expected = [[['CS2305'], ['CS3345'], ['CS3354']]]
+    #     actual = [[['CS2305'], ['CS3345'], ['CS3354']]]
+    #     self.assertEqual(expected, actual,"Error")
 
 unittest.main()

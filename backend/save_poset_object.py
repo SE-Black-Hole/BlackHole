@@ -7,7 +7,7 @@ import sys
 
 # Adding server folder to paths in sys
 # it has to be the absolute path so adjust the path as needed
-sys.path.insert(1, 'C:\\Users\\ianvi\\Documents\\GitHub\\BlackHole\\server') 
+sys.path.insert(1, 'C:\\Users\\ianvi\\Documents\\GitHub\\BlackHole\\backend\\server') 
 
 from data_manager import DataManager
 
