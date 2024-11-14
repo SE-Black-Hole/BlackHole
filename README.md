@@ -27,7 +27,7 @@ pip install -r requirements.txt
 
 3. Start the development server:
 ```bash
-npm start
+npm run start
 ```
 
 The application will open in your default browser at `http://localhost:3000`
@@ -36,18 +36,12 @@ The application will open in your default browser at `http://localhost:3000`
 - Username: 2
 - Password: 2
 
-## Expected Results
-- Both tables should display properly formatted data
-- Sorting functionality should work smoothly in both directions
-- Tables should be responsive on different screen sizes
-- Course data should be accurately displayed
-- UI should maintain consistent dark theme styling
-- Sort indicators (arrows) should properly show current sort state
+
 
 
 ## Test Cases
 
-## Backend Test Cases
+# Backend Test Cases
 - **Description**: Total: 17 Test Cases
 - **Test Steps**:
 1. Run the test_cases.py file.
@@ -61,7 +55,7 @@ OK
 ```
 3. Check the function definitions in test_cases.py for details about each specific test case.
 
-### Database Test Cases 
+# Database Test Cases 
 There are two test cases for the database under the \server directory:
 	- mixue_bao_test_case_1.py - used to run the test case for fetching all classes from MongoDB database
 	- mixue_bao_test_case_2.py - used to run the test case to fetch a single class from the MongoDB database with filter
@@ -79,9 +73,9 @@ python mixue_bao_test_case_2.py
 ```
 3. will need to wait a few seconds to connect to database in each test case
 	 
-### UI Test Cases
+## UI Test Cases
 
-## Test Case 1: Plan Schedule Selection
+# Test Case 1: Plan Schedule Selection
 - **Description**: User can view completed courses in their CS degree plan
 - **Test Steps**:
   1. Launch the application
@@ -95,13 +89,13 @@ python mixue_bao_test_case_2.py
      - Sorting works in both ascending and descending order
      - Select only freshman first-semester classes (up to CS 2305).
 
-### Test Case 2:Visual Flowchart View
+# Test Case 2:Visual Flowchart View
 - **Description**: User can view a visual flowchart showcasing remaining classes in the degree plan.
 - **Test Steps**:
   1. From the Plan Schedule interface, after selecting completed classes, choose Visual Flowchart.
   2. Verify that the flowchart correctly highlights completed and remaining classes in a visual format.
 
-## Test Case 3: Completed and Remaining Classes Views
+# Test Case 3: Completed and Remaining Classes Views
 - **Description**:User can view completed and remaining classes in separate, sortable tables. Remember to go back plan schedule if you want to recheck the functionality
 - **Test Steps**:
   1. On the home dashboard, navigate to Plan Schedule.
