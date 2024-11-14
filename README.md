@@ -45,6 +45,9 @@ The application will open in your default browser at `http://localhost:3000`
 - **Description**: Total: 17 Test Cases
 - **Test Steps**:
 1. Run the test_cases.py file.
+   ```bash
+cd backend
+```
 ```bash
 python test_cases.py
 ```
@@ -65,9 +68,15 @@ Running these test cases will connect to the database, execute the query, and pr
 - **Test Steps**:
 1. to run Test Case 1, type in "python mixue_bao_test_case_1.py" in command line
 ```bash
+cd server
+```
+```bash
 python  mixue_bao_test_case_1.py
 ```
 2. to run Test Case 2, type in "python mixue_bao_test_case_2.py" in command line
+```bash
+cd server
+```
 ```bash
 python mixue_bao_test_case_2.py
 ```
