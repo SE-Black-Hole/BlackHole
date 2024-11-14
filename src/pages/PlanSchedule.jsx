@@ -166,7 +166,7 @@ const PlanSchedule = () => {
     
         const remainingCourses = [...uncompletedMainCourses, ...randomGuidedElectives];
         
-        sendCoursesToBackend(completedCoursesList, remainingCourses); // Send completedCoursesList with className, classNumber, creditHours
+        sendCoursesToBackend(completedCoursesList, remainingCourses);
         
         if (type === 'completed') {
             navigate('/completed-courses', { state: { completedCourses: completedCoursesList } });
@@ -174,8 +174,6 @@ const PlanSchedule = () => {
             navigate('/remaining-courses', { state: { remainingCourses } });
         }
     };
-    
-    
     
 
     const handleViewRemainingClick = () => {
