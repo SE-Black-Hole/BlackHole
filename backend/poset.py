@@ -115,7 +115,7 @@ class Node(object):
             self.semesters_required = 0
         elif self.semesters_required == -2:
             self.semesters_required = 1
-        elif self.semesters_required == 1:
+        elif self.semesters_required == 1 and self.co[0].semesters_required < 1:
             self.semesters_required = -2
         else: 
             print("error for course: %s"% (self.classNumber))
