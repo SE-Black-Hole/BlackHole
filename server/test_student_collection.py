@@ -2,7 +2,7 @@
 # Description: Runs use case 1
 
 from data_manager import DataManager
-from models import Student
+from models import Student, DegreePlan
 
 dm = DataManager()
 
@@ -14,9 +14,9 @@ print('----------------------')
 username = "mixue_bao5"
 password = "abc123"
 
-student = Student(username=username, password=password)
-dm.create_student(student)
-print('created successfully')
+#student = Student(username=username, password=password)
+#dm.create_student(student)
+#print('created successfully')
 
 print('\n----------------------')
 print('Get student from database')
@@ -29,7 +29,7 @@ print('\n----------------------')
 print('Update student in database')
 print('----------------------')
 
-student.coursesCompleted.append('CS3337')
+student.degreePlans.append(DegreePlan(courses=['CS3354', 'CS4337'], currentPlan=True, major='CS'))
 dm.update_student(student)
 print(str(student))
 
