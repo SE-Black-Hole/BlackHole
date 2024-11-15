@@ -9,10 +9,10 @@ const Login = ({ onLogin }) => {
   const navigate = useNavigate();
 
   const validCredentials = [
-    { username: '2', password: '2' },
-    { username: 'Rohin', password: '3' },
-    { username: 'Yatin', password: '4' },
-    { username: 'Hassan', password: '5' },
+    { username: 'DegreePlanner1', password: '1' },
+    { username: 'DegreePlanner2', password: '2' },
+    { username: 'DegreePlanner3', password: '3' },
+    { username: 'DegreePlanner4', password: '4' },
   ];
 
   const handleLogin = () => {

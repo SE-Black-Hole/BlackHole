@@ -22,7 +22,6 @@ const SignUp = () => {
 
     // TODO: Replace with actual API call when backend is ready
 
-    // For now, just show success and redirect
     alert('Account created successfully!');
     navigate('/');
   };

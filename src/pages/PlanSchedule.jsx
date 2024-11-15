@@ -9,11 +9,11 @@ const PlanSchedule = () => {
         { classNumber: "CS 1200", className: "Introduction to Computer Science and Software Engineering", creditHours: 2 },
         { classNumber: "CS 1436", className: "Programming Fundamentals", creditHours: 4 },
         { classNumber: "MATH 2413", className: "Calculus I", creditHours: 4 },
+        { classNumber: "CS 2305", className: "Discrete Mathematics for Computing I", creditHours: 3 },
         { classNumber: "MATH 2414", className: "Calculus II", creditHours: 4 },
         { classNumber: "PHYS 2325", className: "Mechanics", creditHours: 3 },
         { classNumber: "PHYS 2125", className: "Physics Lab I", creditHours: 1 },
         { classNumber: "CS 1337", className: "Computer Science I", creditHours: 3 },
-        { classNumber: "CS 2305", className: "Discrete Mathematics for Computing I", creditHours: 3 },
         { classNumber: "PHYS 2326", className: "Electromagnetism and Waves", creditHours: 3 },
         { classNumber: "PHYS 2126", className: "Physics Lab II", creditHours: 1 },
         { classNumber: "CS 2336", className: "Computer Science II", creditHours: 3 },
@@ -112,23 +112,76 @@ const PlanSchedule = () => {
         return randomElectives;
     };
 
+    const sendCoursesToBackend = async (completedCoursesList, remainingCoursesList) => {
+    console.log("Completed Courses:", completedCoursesList);
+    console.log("Remaining Courses:", remainingCoursesList);
+        try {
+            const response = await fetch('http://localhost:5000/update-student-courses', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: 'DegreePlanner1',
+                    completed_courses: completedCoursesList,
+                    remaining_courses: remainingCoursesList
+                })
+            });
+            if (!response.ok) {
+                throw new Error('Failed to send courses to the backend');
+            }
+            console.log('Courses sent to backend successfully');
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     const handleGenerateFlowchartClick = () => {
         const uncompletedMainCourses = mainCourses.filter(course => !completedCourses.has(course.classNumber));
         const randomGuidedElectives = getRandomGuidedElectives(4);
         const flowchartCourses = [...uncompletedMainCourses, ...randomGuidedElectives];
+        sendCoursesToBackend(Array.from(completedCourses), flowchartCourses);
+
         navigate('/flowchart', { state: { remainingCourses: flowchartCourses } });
     };
 
-    const handleViewRemainingClick = () => {
-        const remainingCourses = mainCourses.concat(guidedElectives).filter(course => !completedCourses.has(course.classNumber));
-        navigate('/remaining-courses', { state: { remainingCourses } });
+    const handleViewCourses = (type) => {
+        const completedCoursesList = Array.from(completedCourses)
+            .map(courseNumber => {
+                const course = mainCourses.concat(guidedElectives).find(course => course.classNumber === courseNumber);
+                if (course) {
+                    return {
+                        className: course.className,
+                        classNumber: course.classNumber,
+                        creditHours: course.creditHours,
+                    };
+                }
+                return null; 
+            })
+            .filter(Boolean);
+    
+        const uncompletedMainCourses = mainCourses.filter(course => !completedCourses.has(course.classNumber));
+    
+        const randomGuidedElectives = getRandomGuidedElectives(4);
+    
+        const remainingCourses = [...uncompletedMainCourses, ...randomGuidedElectives];
+        
+        sendCoursesToBackend(completedCoursesList, remainingCourses);
+        
+        if (type === 'completed') {
+            navigate('/completed-courses', { state: { completedCourses: completedCoursesList } });
+        } else if (type === 'remaining') {
+            navigate('/remaining-courses', { state: { remainingCourses } });
+        }
     };
+    
 
+    const handleViewRemainingClick = () => {
+        handleViewCourses('remaining');
+    };
+    
     const handleViewCompletedClick = () => {
-        const completedCoursesList = Array.from(completedCourses).map(courseNumber => 
-            mainCourses.concat(guidedElectives).find(course => course.classNumber === courseNumber)
-        ).filter(Boolean);
-        navigate('/completed-courses', { state: { completedCourses: completedCoursesList } });
+        handleViewCourses('completed');
     };
     
     return (
@@ -179,7 +232,6 @@ const PlanSchedule = () => {
                                 ))}
                             </tbody>
 
-                            {/* Guided Electives Section */}
                             <thead>
                                 <tr>
                                     <th colSpan="4" className="px-6 py-4 text-left text-sm font-medium text-gray-300 bg-gray-800">

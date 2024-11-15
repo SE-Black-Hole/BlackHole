@@ -1,0 +1,7 @@
+pymongo
+pydantic
+Flask
+DataManager  
+CORS
+List
+pickle
