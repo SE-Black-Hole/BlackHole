@@ -30,6 +30,8 @@ class Semester:
         if Semester.index == 1: Semester.year += 1
 
     def create_schedule(self):
+        # print("BEEEEE")
+        # print(self.index_courses) 
         while not self.locked and self.can_make_schedule: #add iteration for coreq courses adjust for locked courses
             i = 0
             while i < len(self.index_courses) - self.max_index_before_locked - self.coreqs_num:
@@ -56,14 +58,15 @@ class Semester:
             if self.can_return_this_size and self.courses_num <= len(self.courses_avail):
                 self.can_return_this_size = False
                 self.index_courses = [i for i in range(self.courses_num - 1, -1, -1)]
+                self.current_courses = [self.courses_avail[i] for i in self.index_courses]
                 self.current_credit_hours = sum([node.credits for node in self.current_courses])
-                self.current_courses = [self.courses_avail[i] for i in range(self.courses_num)]
                 if self.current_credit_hours >= self.min_credit_hours and self.current_credit_hours <= self.max_credit_hours:
                     self.can_return_this_size = True                        
                     return self.get_courses_to_update()
             else:
                 self.can_make_schedule = False
                 self.current_courses = []
+                self.current_credit_hours = 0
 
         return self.get_courses_to_update()
 
@@ -105,10 +108,9 @@ class Semester:
                 pass
         return False        
 
-    def reset(self, index):
-        
+    def reset(self, index):        
         for i in range(index - 1, -1,-1):
-            self.current_credit_hours -= self.current_courses[i] - self.courses_avail[self.index_courses[i] + 1]
+            self.current_credit_hours -= self.current_courses[i].credits - self.courses_avail[self.index_courses[i + 1] + 1].credits
             self.index_courses[i] = self.index_courses[i + 1] + 1
             self.current_courses[i] = self.courses_avail[self.index_courses[i]]
     
@@ -121,6 +123,13 @@ class Semester:
 
     def get_current_courses(self):
         arr = list(self.current_courses)
+        for i in range(len(arr)):
+            arr[i] = arr[i].classNumber
+
+        return arr
+
+    def get_courses_avail(self):
+        arr = list(self.courses_avail)
         for i in range(len(arr)):
             arr[i] = arr[i].classNumber
 
@@ -176,6 +185,7 @@ class Semester:
             for i in range(self.courses_num - 1, -1,-1):
                 self.index_courses.append(i)
                 self.current_courses.append(self.courses_avail[i])
+                self.current_credit_hours += self.courses_avail[i].credits
         else:
             self.current_courses = []
 
@@ -190,15 +200,8 @@ class Semester:
             to_update += node.take_drop()
         return to_update
     
-    def remove_required_courses(self,nodes):
-        self.current_credit_hours -= sum([course.credits for course in nodes])
-        to_update = []
-        for node in nodes:
-            node.locked_by_user = False
-            self.courses.remove(node)
-            to_update += node.take_drop()
-
-        return to_update
+    def get_credits(self):
+        return self.current_credit_hours
 
 # semester = Semester()
     

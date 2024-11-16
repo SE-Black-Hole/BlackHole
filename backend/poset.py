@@ -12,6 +12,15 @@ class Poset(object):
         self.total_credits = self.get_total_credits()
 
     # def return_to_default_
+    def get_str_courses_by_time(self):
+        arr = []
+        for i in self.courses_by_time:
+            arr.append([])
+            for j in i:
+                arr[-1].append(j.classNumber)
+
+        return arr
+    
     def get_total_credits(self):
         credits_total = 0
         for i in self.requiredByDegree:
@@ -39,10 +48,9 @@ class Poset(object):
         return courses_by_time
     def update_semesters_required(self,courses):
         for course in courses:
-            if not course.updated and course in self.courses_by_time[course.previous_semesters_required]:
+            if course in self.courses_by_time[course.previous_semesters_required]:
                 self.courses_by_time[course.previous_semesters_required].remove(course)
                 self.courses_by_time[course.semesters_required].append(course)
-                course.update()
 
     def __str__(self):
         string = ""
@@ -90,9 +98,8 @@ class Node(object):
         semesters_required = self.semesters_required
         new_index = max(self.pre,key=lambda course: course.semesters_required).semesters_required + 1
         self.semesters_required = 0 if new_index < 0 else new_index
-        if self.updated:
+        if semesters_required != self.semesters_required:
             updated_courses.append(self)
-            self.updated = False
             self.previous_semesters_required = semesters_required
             for course in self.preOf:
                 course.update_semesters_required(updated_courses)
@@ -116,25 +123,24 @@ class Node(object):
 
     def take_drop(self):
         courses_to_update = []
-        semesters_required = self.semesters_required
+        self.previous_semesters_required = self.semesters_required
         if not self.semesters_required:
             self.semesters_required = -1
         elif self.semesters_required == -1:
             self.semesters_required = 0
         elif self.semesters_required == -2:
             self.semesters_required = 1
-        elif self.semesters_required == 1 and self.co[0].semesters_required < 1:
+        elif self.semesters_required == 1 and len(self.co) and self.co[0].semesters_required < 1:
             self.semesters_required = -2
         else: 
             print("error for course: %s"% (self.classNumber))
             return
         
-        if self.updated:
-            courses_to_update.append(self)
-            self.updated = False
-            self.previous_semesters_required = semesters_required
-            for course in self.preOf:
-                course.update_semesters_required(courses_to_update)
+
+        courses_to_update.append(self)
+        for course in self.preOf:
+            course.update_semesters_required(courses_to_update)
+
         return courses_to_update
             
     def set_locked(self):

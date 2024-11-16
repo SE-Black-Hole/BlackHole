@@ -305,10 +305,10 @@ class TestDegreeGenerator(unittest.TestCase):
         poset = Poset([cs3345,cs3354,cs2305],[], [])
         generator = Generator(poset)
         expected = [[]]
-        actual = generator.get_new_empty_lists_per_semester()
+        actual = generator.get_new_list()
         self.assertEqual(expected, actual,"Error")
 
-    def test_generate(self): # 17
+    def test_generate_one_possible_plan1(self): # 17
         """Test generate method returning a simple plan"""
         cs3354 = Node("CS3354")
         cs2305 = Node("CS2305")
@@ -320,34 +320,185 @@ class TestDegreeGenerator(unittest.TestCase):
         cs2305.update_semesters_required_all()
         poset = Poset([cs3345,cs3354,cs2305],[], [])
         # print(poset)
-        generator = Generator(poset)
+        generator = Generator(poset,3)
         expected = [[['CS2305'], ['CS3345'], ['CS3354']]]
-        actual = generator.generate_shortest_plans()
+        actual = generator.generate()
         self.assertEqual(expected, actual,"Error")
 
-    # def test_generate_real_class(self): #18
-    #     """ Retrieving list of taken classes and generating plan with less deviation"""
-    #     dm = DataManager()
-    #     completed_courses = dm.get_courses_completed_by_username()
-    #     poset = None
-    #     with open("classObjects_data.pkl", 'rb') as inp:
-    #         poset = pickle.load(inp)
-    #         # print(poset)
-    #     classes_taken = []
-    #     for course in completed_courses:
-    #         classes_taken.append(poset.fetch(course.replace(" ", "")))
 
-    #     print(completed_courses)
-    #     print(classes_taken)
+    def test_generate_one_possible_plan2(self): # 18
+        """Test generate method returning a simple plan"""
+        cs3354 = Node("CS3354")
+        cs2305 = Node("CS2305")
+        cs3345 = Node("CS3345")
+        cs3305 = Node("CS3305")
+        cs3345.preOf.append(cs3354)
+        cs3345.pre.append(cs2305)
+        cs3354.pre.append(cs3345)
+        cs3354.pre.append(cs3305)
+        cs2305.preOf.append(cs3345)
+        cs2305.preOf.append(cs3305)
+        cs3305.pre.append(cs2305)
+        cs3305.preOf.append(cs3354)
+        cs2305.update_semesters_required_all()
+        poset = Poset([cs3345,cs3354,cs3305,cs2305],[], [])
+        # print(poset)
+        # print(poset)
+        generator = Generator(poset,3)
+        expected = [[['CS2305'], ['CS3305', 'CS3345'], ['CS3354']]]
+        actual = generator.generate()
+        self.assertEqual(expected, actual,"Error")
 
-    #     g = Generator(poset)
-    #     g.update_poset(classes_taken)
+    def test_generate_one_possible_plan3s(self): # 19
+        """Test generate method returning a simple plan"""
+        # print("pao")
+        cs3354 = Node("CS3354")
+        cs2305 = Node("CS2305")
+        cs3345 = Node("CS3345")
+        cs3305 = Node("CS3305")
+        cs1200 = Node("cs1200")
+        cs3345.preOf.append(cs3354)
+        cs3345.pre.append(cs2305)
+        cs3354.pre.append(cs3345)
+        cs3354.pre.append(cs3305)
+        cs2305.preOf.append(cs3345)
+        cs1200.preOf.append(cs3305)
+        cs1200.preOf.append(cs3345)
+        cs2305.preOf.append(cs3305)
+        cs3305.pre.append(cs2305)
+        cs3305.preOf.append(cs3354)
+        cs3345.pre.append(cs1200)
+        cs3305.pre.append(cs1200)
+        cs2305.update_semesters_required_all()
+        poset = Poset([cs3345,cs3354,cs3305,cs2305,cs1200],[], [])
+        # print(poset)
+        generator = Generator(poset,3)
+        expected = [[['cs1200', 'CS2305'], ['CS3305', 'CS3345'], ['CS3354']]]
+        actual = generator.generate()
+        self.assertEqual(expected, actual,"Error")
+        
+    def test_generate_plans(self): # 20
+        """Test generate method returning a simple plan"""
+        # print("pao")
+        cs3354 = Node("CS3354")
+        cs2305 = Node("CS2305")
+        cs3345 = Node("CS3345")
+        cs3305 = Node("CS3305")
+        cs1200 = Node("cs1200")
+        cs3345.preOf.append(cs3354)
+        cs3345.pre.append(cs2305)
+        cs3354.pre.append(cs3345)
+        cs3354.pre.append(cs3305)
+        cs2305.preOf.append(cs3345)
+        cs2305.preOf.append(cs3305)
+        cs3305.pre.append(cs2305)
+        cs3305.preOf.append(cs3354)
+        cs2305.update_semesters_required_all()
+        poset = Poset([cs3345,cs3354,cs3305,cs2305,cs1200],[], [])
+        # print(poset)
+        generator = Generator(poset,4)
+        expected = [[['CS2305'], ['cs1200'], ['CS3305', 'CS3345'], ['CS3354']],
+                    [['CS2305'], ['CS3345'], ['CS3305'], ['CS3354', 'cs1200']],
+                    [['CS2305'], ['CS3345'], ['cs1200', 'CS3305'], ['CS3354']],
+                    [['CS2305'], ['CS3305'], ['CS3345'], ['cs1200', 'CS3354']], 
+                    [['CS2305'], ['CS3305'], ['CS3345', 'cs1200'], ['CS3354']], 
+                    [['CS2305'], ['CS3345', 'cs1200'], ['CS3305'], ['CS3354']], 
+                    [['CS2305'], ['CS3305', 'cs1200'], ['CS3345'], ['CS3354']], 
+                    [['CS2305'], ['CS3305', 'CS3345'], ['CS3354'], ['cs1200']], 
+                    [['CS2305'], ['CS3305', 'CS3345'], ['cs1200'], ['CS3354']], 
+                    [['cs1200'], ['CS2305'], ['CS3305', 'CS3345'], ['CS3354']], 
+                    [['cs1200', 'CS2305'], ['CS3345'], ['CS3305'], ['CS3354']], 
+                    [['cs1200', 'CS2305'], ['CS3305'], ['CS3345'], ['CS3354']]]
+        actual = generator.generate()
+        # print(actual)
+        self.assertEqual(expected, actual,"Error")
 
-    #     print(g.get_smallest_deviation_plan())
+    def test_generate_shortest_plans(self): # 21
+        """Test generate method returning a simple plan"""
+        # print("pao")
+        cs3354 = Node("CS3354")
+        cs2305 = Node("CS2305")
+        cs3345 = Node("CS3345")
+        cs3305 = Node("CS3305")
+        cs1200 = Node("cs1200")
+        cs4375 = Node("cs4375")
+        cs4375.pre.append(cs3305)
+        cs3345.preOf.append(cs3354)
+        cs3345.pre.append(cs2305)
+        cs3354.pre.append(cs3345)
+        cs3354.pre.append(cs3305)
+        cs2305.preOf.append(cs3345)
+        cs2305.preOf.append(cs3305)
+        cs3305.pre.append(cs2305)
+        cs3305.preOf.append(cs4375)
+        cs3305.preOf.append(cs3354)
+        cs2305.update_semesters_required_all()
+        poset = Poset([cs3345,cs3354,cs3305,cs2305,cs1200,cs4375],[], [])
+        # print(poset)
+        generator = Generator(poset)
+        expected = [[['CS2305'], ['CS3305', 'CS3345'], ['cs1200', 'CS3354', 'cs4375']], 
+                    [['CS2305'], ['CS3305', 'CS3345', 'cs1200'], ['cs4375', 'CS3354']],
+                      [['cs1200', 'CS2305'], ['CS3305', 'CS3345'], ['CS3354', 'cs4375']]]
+        # print("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH\n")
+        actual = generator.generate_shortest_plans()
+        # print(actual)
+        self.assertEqual(expected, actual,"Error")
+
+    def test_plan_least_deviation(self): # 22
+        """Test generate method returning a simple plan"""
+        # print("pao")
+        cs3354 = Node("CS3354")
+        cs2305 = Node("CS2305")
+        cs3345 = Node("CS3345")
+        cs3305 = Node("CS3305")
+        cs1200 = Node("cs1200")
+        cs4375 = Node("cs4375")
+        cs4375.pre.append(cs3305)
+        cs3345.preOf.append(cs3354)
+        cs3345.pre.append(cs2305)
+        cs3354.pre.append(cs3345)
+        cs3354.pre.append(cs3305)
+        cs2305.preOf.append(cs3345)
+        cs2305.preOf.append(cs3305)
+        cs3305.pre.append(cs2305)
+        cs3305.preOf.append(cs4375)
+        cs3305.preOf.append(cs3354)
+        cs2305.update_semesters_required_all()
+        poset = Poset([cs3345,cs3354,cs3305,cs2305,cs1200,cs4375],[], [])
+        # print(poset)
+        generator = Generator(poset)
+        expected = [['cs1200', 'CS2305'], ['CS3305', 'CS3345'], ['CS3354', 'cs4375']]
+        # print("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH\n")
+        actual = generator.get_smallest_deviation_plan()
+        # print(actual)
+        self.assertEqual(expected, actual,"Error")
+
+    def test_generate_real_class(self): # 23
+        """ Retrieving list of taken classes and generating plan with less deviation"""
+        dm = DataManager()
+        completed_courses = dm.get_courses_completed_by_username()
+        poset = None
+        with open("classObjects_data.pkl", 'rb') as inp:
+            poset = pickle.load(inp)
+            # print(poset)
+        classes_taken = []
+        for course in completed_courses:
+            # print(course)
+            classes_taken.append(poset.fetch(course["classNumber"].replace(" ", "")))
+
+        # print('pao')
+        # print(completed_courses)
+        # print('pao')
+        # print(classes_taken)
+
+        g = Generator(poset)
+        g.update_poset(classes_taken)
+
+        print(g.get_smallest_deviation_plan())
 
 
-    #     expected = [[['CS2305'], ['CS3345'], ['CS3354']]]
-    #     actual = [[['CS2305'], ['CS3345'], ['CS3354']]]
-    #     self.assertEqual(expected, actual,"Error")
+        expected = [[['CS2305'], ['CS3345'], ['CS3354']]]
+        actual = [[['CS2305'], ['CS3345'], ['CS3354']]]
+        self.assertEqual(expected, actual,"Error")
 
 unittest.main()
