@@ -57,6 +57,14 @@ for c in classes:
     if isCore:
         core.append(node)
         continue
+    if c.isMajorElective:
+        node.isMajorElective = True 
+        if not retrieved:
+            electives.append(node)
+        node.pre = [makeRetrieveNode(c2)[0] for c2 in c.prerequisites + c.corequisites]
+        continue
+    elif not retrieved:
+        requiredByDegree.append(node)
 
     node.pre = [makeRetrieveNode(c2)[0] for c2 in c.prerequisites + c.corequisites]
     node.co = [makeRetrieveNode(c2)[0] for c2 in c.corequisites]
@@ -64,14 +72,10 @@ for c in classes:
         # print(n2)
         n2.preOf.append(node)
         node.set_semesters_required(n2.semesters_required  + 1)
+        n2.set_height(node.height)
     for n2 in node.co:
         n2.coOf.append(node)
-    if c.isMajorElective:
-        node.isMajorElective = True 
-        if not retrieved:
-            electives.append(node)
-    elif not retrieved:
-        requiredByDegree.append(node)
+    
 
 
 

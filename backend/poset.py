@@ -77,10 +77,17 @@ class Node(object):
         self.coOf = []
         self.semesters_required = 0
         self.previous_semesters_required = 0
+        self.height = 0
         self.isMajorElective = False
         self.locked = False
         self.taken = False
         self.updated = True
+
+    def set_height(self, height):
+        if self.height < height + 1:
+            self.height = height + 1
+            for node in self.pre:
+                 node.set_height(self.height)
 
     def update_semesters_required_all(self, semesters_required=0):
         self.semesters_required = semesters_required
@@ -93,7 +100,7 @@ class Node(object):
             for node in self.preOf:
                  node.set_semesters_required(num_courses + 1)
 
-    def update_semesters_required(self, updated_courses):
+    def update_semesters_required(self, updated_courses, first):
 
         semesters_required = self.semesters_required
         new_index = max(self.pre,key=lambda course: course.semesters_required).semesters_required + 1
@@ -101,8 +108,9 @@ class Node(object):
         if semesters_required != self.semesters_required:
             updated_courses.append(self)
             self.previous_semesters_required = semesters_required
-            for course in self.preOf:
-                course.update_semesters_required(updated_courses)
+            if first:
+                for course in self.preOf:
+                    course.update_semesters_required(updated_courses, False)
 
     def check_if_coreq_available(self):
         if not len(self.coOf):
@@ -139,7 +147,7 @@ class Node(object):
 
         courses_to_update.append(self)
         for course in self.preOf:
-            course.update_semesters_required(courses_to_update)
+            course.update_semesters_required(courses_to_update, True)
 
         return courses_to_update
             
@@ -149,4 +157,5 @@ class Node(object):
     def __str__(self):
         return self.classNumber + " " + str(self.credits) + ", Pre: " + \
         str([str(n.classNumber) for n in self.pre ]) + ", co: " + str([str(n.classNumber) for n in self.co ]) + \
-        ", preOf:" + str([str(n.classNumber) for n in self.preOf ]) + ", coOf:" + str([str(n.classNumber) for n in self.coOf ]) + ", " + str(self.semesters_required) + ", " + str(self.isMajorElective)
+        ", preOf:" + str([str(n.classNumber) for n in self.preOf ]) + ", coOf:" + str([str(n.classNumber) for n in self.coOf ]) + ", semesters:" \
+        + str(self.semesters_required) + ", height:" + str(self.height) + ", " + str(self.isMajorElective)

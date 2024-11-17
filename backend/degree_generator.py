@@ -12,7 +12,7 @@ class Generator(object):
         self.major_electives_credits = 12
         self.time_required = time_required
         # self.create_semesters(self.time_to_graduate)
-        self.total_credits = sum([node.credits for node in self.poset.requiredByDegree])
+        self.total_credits = self.poset.get_total_credits()
         self.total_credits_left = self.total_credits
         self.average_credits = 0
         self.create_semesters(self.time_required)
@@ -47,10 +47,10 @@ class Generator(object):
             # print("all classes by time:", self.poset.get_str_courses_by_time())
             # print(plan)
             # print(self.semesters[1].get_courses_avail())
-            # print(semester_index == len(self.semesters) - 1 , self.semesters[semester_index].can_make_schedule , self.get_credits() == self.poset.total_credits)
-            # print(self.get_credits(),self.poset.total_credits)
+            # print(semester_index == len(self.semesters) - 1 , self.semesters[semester_index].can_make_schedule , self.get_credits() == self.total_credits_left)
+            # print(self.get_credits(),self.total_credits_left)
             # print()
-            if semester_index == len(self.semesters) - 1 and self.semesters[semester_index].can_make_schedule and self.get_credits() == self.poset.total_credits:
+            if semester_index == len(self.semesters) - 1 and self.semesters[semester_index].can_make_schedule and self.get_credits() == self.total_credits_left:
                 plans.append(plan)
                 self.credits_per_plan_per_semester.append([semester.current_credit_hours for semester in self.semesters])
                 plan = self.get_new_list()
@@ -70,18 +70,18 @@ class Generator(object):
     def generate_shortest_plans(self):
         plans = []
 
-        while not len(plans) and self.time_required < 6:
+        while not len(plans) and self.time_required < 11:
             # print(self.poset)
             plans = self.generate()
             # print('hello')
             if not len(plans):
-                self.time_required += 1
                 self.append_semester()
                 # self.poset.create_separate_courses_by_time()
             
 
-        # if self.time_required > 6:
-        #     return []
+        if self.time_required > 10:
+            print("Error: reached timeout")
+            return []
         
         self.average_credits = self.total_credits_left / self.time_required
     
@@ -109,6 +109,7 @@ class Generator(object):
     def create_semesters(self,time_required):
         # for past_semester in classes_taken_per_semester: # courses should have required_by_user set to True
         #     self.semesters.append(Semester(req_by_user=past_semester,locked=True))
+        self.time_required = time_required
         self.semesters = []
         for i in range(time_required):
             self.semesters.append(Semester())
@@ -116,6 +117,7 @@ class Generator(object):
    
     def append_semester(self):
         self.semesters.append(Semester())
+        self.time_required += 1
 
     def update_poset(self, classes_taken):
         to_update = []
@@ -132,8 +134,13 @@ class Generator(object):
             str_to_update.append(i.classNumber)
         # print(str_to_update)
         self.poset.update_semesters_required(to_update)
-
-        self.time_to_graduate = ceil(self.poset.courses_by_time[-3][0].semesters_required/2)
+        # print(self.poset.get_str_courses_by_time())
+        # print(self.poset)
+        # for i in range(len(self.poset.courses_by_time) - 3, -1,-1):
+        #     if len(self.poset.courses_by_time[i]):
+        #         self.time_to_graduate = ceil(self.poset.courses_by_time[i][0].semesters_required/2)
+        #         break
+        # print("time:", self.time_required)
         self.create_semesters(self.time_required)
 
     def get_new_list(self):

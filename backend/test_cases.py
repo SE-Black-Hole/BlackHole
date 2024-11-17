@@ -473,7 +473,37 @@ class TestDegreeGenerator(unittest.TestCase):
         # print(actual)
         self.assertEqual(expected, actual,"Error")
 
-    def test_generate_real_class(self): # 23
+    def test_generate_least_deviation_plan_after_updating_poset(self): # 23
+        """ Retrieving list of taken classes and generating plan with less deviation"""
+        # print('pao')
+        cs3354 = Node("CS3354")
+        cs2305 = Node("CS2305")
+        cs3345 = Node("CS3345")
+        cs3305 = Node("CS3305")
+        cs1200 = Node("cs1200")
+        cs3345.preOf.append(cs3354)
+        cs3345.pre.append(cs2305)
+        cs3354.pre.append(cs3345)
+        cs3354.pre.append(cs3305)
+        cs2305.preOf.append(cs3345)
+        cs1200.preOf.append(cs3305)
+        cs1200.preOf.append(cs3345)
+        cs2305.preOf.append(cs3305)
+        cs3305.pre.append(cs2305)
+        cs3305.preOf.append(cs3354)
+        cs3345.pre.append(cs1200)
+        cs3305.pre.append(cs1200)
+        cs2305.update_semesters_required_all()
+        poset = Poset([cs3345,cs3354,cs3305,cs2305,cs1200],[], [])
+        g = Generator(poset)
+        # print(poset.get_str_courses_by_time())
+        g.update_poset([cs1200,cs2305])
+        # print(poset.get_str_courses_by_time())
+        expected = [['CS3345', 'CS3305'], ['CS3354']]
+        actual = g.get_smallest_deviation_plan()
+        self.assertEqual(expected, actual,"Error")
+
+    def test_generate_real_class(self): # 24
         """ Retrieving list of taken classes and generating plan with less deviation"""
         dm = DataManager()
         completed_courses = dm.get_courses_completed_by_username()
@@ -485,14 +515,16 @@ class TestDegreeGenerator(unittest.TestCase):
         for course in completed_courses:
             # print(course)
             classes_taken.append(poset.fetch(course["classNumber"].replace(" ", "")))
-
+        # print(completed_courses)
         # print('pao')
         # print(completed_courses)
         # print('pao')
         # print(classes_taken)
-
+        # print(poset)
+        # print("!!!!!!!!!!!!!!!!!!!")
+        # print(poset.get_str_courses_by_time())
         g = Generator(poset)
-        g.update_poset(classes_taken)
+        # g.update_poset(classes_taken)
 
         print(g.get_smallest_deviation_plan())
 
