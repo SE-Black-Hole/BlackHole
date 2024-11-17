@@ -2,7 +2,7 @@
 # Description: Runs use case 1
 
 from data_manager import DataManager
-from models import Student
+from models import Student, DegreePlan
 
 dm = DataManager()
 
@@ -26,3 +26,17 @@ elif isinstance(completed_courses, tuple) and completed_courses[1] == 404:
 else:
     print("An unexpected error occurred.")
 
+print('\n----------------------')
+print('Get student from database')
+print('----------------------')
+
+student = dm.get_student(username, password)
+print(str(student))
+
+print('\n----------------------')
+print('Update student in database')
+print('----------------------')
+
+student.degreePlans.append(DegreePlan(courses=['CS3354', 'CS4337'], currentPlan=True, major='CS'))
+dm.update_student(student)
+print(str(student))
