@@ -89,8 +89,8 @@ python mixue_bao_test_case_2.py
 - **Test Steps**:
   1. Launch the application
   2. Log in using the credentials:
-     - Username: 2
-     - Password: 2
+     - Username: DegreePlanner1
+     - Password: 1
   3. On the home dashboard, navigate to Plan Schedule.
   4. Select courses taken.
   5. Example Test Cases:
