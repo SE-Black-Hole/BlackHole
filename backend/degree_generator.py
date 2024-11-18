@@ -167,10 +167,10 @@ class Generator(object):
         # print(self.poset.get_str_courses_by_time())
         # print(self.poset.get_str_courses_by_time())
         plan = []
-        print(self.get_credits_per_semester())
+        # print(self.get_credits_per_semester())
         for i in self.semesters:
             plan.append(i.get_current_courses())
-        print(plan)
+        # print(plan)
         for i in range(len(self.semesters) - 1): # it does not check for all free credit hours like 3,2,1. It just picks the last in the list
             while self.semesters[i].can_move_courses:
                 # print("Trying to move a course")
@@ -194,7 +194,7 @@ class Generator(object):
                 else:
                     break
 
-        print(self.get_credits_per_semester())
+        # print(self.get_credits_per_semester())
         plan = []
         for i in self.semesters:
             plan.append(i.get_current_courses())
