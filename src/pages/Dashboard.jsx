@@ -24,7 +24,6 @@ const Dashboard = () => {
 
   const [creditHoursData, setCreditHoursData] = useState([]);
 
-  // Fetch data from the API
   useEffect(() => {
     const fetchCompletedCourses = async () => {
       try {
@@ -42,7 +41,6 @@ const Dashboard = () => {
           const completedCourses = completedData.completed_courses_details;
           const remainingCourses = remainingData.remaining_courses_details || [];
 
-          // Major courses by type
           const majorPrepCourses = [
             'ECS 1100',
             'CS 1200',
@@ -76,7 +74,6 @@ const Dashboard = () => {
             'CS 4485',
           ];
 
-          // Calculate total completed credit hours per category
           const completedMajorPrep = completedCourses
             .filter((course) => majorPrepCourses.includes(course.classNumber))
             .reduce((sum, course) => sum + course.creditHours, 0);
@@ -98,7 +95,6 @@ const Dashboard = () => {
             0
           );
 
-          // Update degreeProgress with completed credit hours
           setDegreeProgress((prev) => {
             const completedCreditHours = 
               completedMajorPrep + completedMajorCore + completedTechElectives + prev.electives.completed +24;
@@ -146,7 +142,6 @@ const Dashboard = () => {
   }, []);
   
 
-  // Calculate percentages for credit hour breakdown
   useEffect(() => {
     setCreditHoursData([
       {
@@ -206,7 +201,6 @@ const Dashboard = () => {
     ]);
   }, [degreeProgress]);
 
-  // Custom tooltip for the credit hours breakdown
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;

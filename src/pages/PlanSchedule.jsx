@@ -165,10 +165,8 @@ const PlanSchedule = () => {
         const remainingCourses = [...uncompletedMainCourses, ...randomGuidedElectives];
     
         try {
-            // Wait for the API call to finish
             await sendCoursesToBackend(completedCoursesList, remainingCourses);
     
-            // Navigate after the API call is successful
             if (type === 'completed') {
                 navigate('/completed-courses', { state: { completedCourses: completedCoursesList } });
             } else if (type === 'remaining') {
@@ -176,7 +174,6 @@ const PlanSchedule = () => {
             }
         } catch (error) {
             console.error("Error while sending courses to backend:", error);
-            // Optionally, display an error message or handle the error gracefully here
         }
     };
     

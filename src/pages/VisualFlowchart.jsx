@@ -36,7 +36,7 @@ const Flowchart = () => {
 
     const handleClassesPerSemesterChange = (e) => {
         setClassesPerSemester(Number(e.target.value));
-        setCurrentPage(0); // Reset to the first page
+        setCurrentPage(0); 
     };
 
     const paginatedCourses = useMemo(
@@ -52,7 +52,7 @@ const Flowchart = () => {
         return paginatedCourses.map((course, index) => ({
             id: course.classNumber,
             data: { label: `${course.className} (${course.classNumber})` },
-            position: { x: index * 250, y: 50 }, // Adjusted for horizontal layout
+            position: { x: index * 250, y: 50 }, 
             style: {
                 backgroundColor: '#1E40AF',
                 color: '#fff',
