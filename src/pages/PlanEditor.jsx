@@ -8,11 +8,7 @@ const PlanEditor = () => {
   const navigate = useNavigate();
   const { getPlan, updatePlan } = usePlans();
 
-  const [plan, setPlan] = useState(null);
-  const [selectedSemester, setSelectedSemester] = useState(null);
-  const [showCourseSelector, setShowCourseSelector] = useState(false);
-  const [prerequisiteErrors, setPrerequisiteErrors] = useState({});
-  const [saving, setSaving] = useState(false);
+ 
 
   // Define available courses
   const availableCourses = [
@@ -45,7 +41,7 @@ const PlanEditor = () => {
       id: 'CS2305',
       name: 'Discrete Mathematics for Computing I',
       credits: 3,
-      prerequisites: ['MATH2413'],
+      prerequisites: [],
     },
     {
       id: 'MATH2414',
@@ -93,7 +89,7 @@ const PlanEditor = () => {
       id: 'CS2340',
       name: 'Computer Architecture',
       credits: 3,
-      prerequisites: ['CS2336'],
+      prerequisites: ['CS1337'],
     },
     {
       id: 'MATH2418',
@@ -129,7 +125,7 @@ const PlanEditor = () => {
       id: 'CS4337',
       name: 'Organization of Programming Languages',
       credits: 3,
-      prerequisites: ['CS3345'],
+      prerequisites: ['CS2336', 'CS2305'],
     },
     {
       id: 'CS4347',
@@ -343,6 +339,13 @@ const PlanEditor = () => {
     },
   ];
 
+  const [plan, setPlan] = useState(null);
+  const [selectedSemester, setSelectedSemester] = useState(null);
+  const [showCourseSelector, setShowCourseSelector] = useState(false);
+  const [prerequisiteErrors, setPrerequisiteErrors] = useState({});
+  const [saving, setSaving] = useState(false);
+  const [filteredCourses, setFilteredCourses] = useState([...availableCourses]); // Copy of the full list
+
   useEffect(() => {
     const currentPlan = getPlan(parseInt(planId));
     if (currentPlan) {
@@ -415,6 +418,9 @@ const PlanEditor = () => {
     });
     setShowCourseSelector(false);
     setPrerequisiteErrors({});
+    setFilteredCourses((prevCourses) =>
+      prevCourses.filter((c) => c.id !== course.id)
+    );
   };
 
   const handleRemoveCourse = async (courseId, semesterId) => {
@@ -431,6 +437,10 @@ const PlanEditor = () => {
         }
         return semester;
       });
+
+      const removedCourse = prevPlan.semesters
+      .find((semester) => semester.id === semesterId)
+      .courses.find((course) => course.id === courseId);
 
       // Calculate total credits from remaining courses
       const totalCompletedCredits = updatedSemesters.reduce(
@@ -450,6 +460,8 @@ const PlanEditor = () => {
       const remainingCredits = 124 - totalCompletedCredits;
       const semestersNeeded = Math.ceil(remainingCredits / 15);
       let expectedGraduation = calculateExpectedGraduation(semestersNeeded);
+
+      setFilteredCourses((prevCourses) => [...prevCourses, removedCourse]);
 
       return {
         ...prevPlan,
@@ -638,7 +650,7 @@ const PlanEditor = () => {
           <div className="bg-gray-800 rounded-lg shadow-xl border border-gray-700 w-full max-w-md p-6">
             <h2 className="text-xl font-bold text-white mb-4">Add Course</h2>
             <div className="space-y-3 max-h-96 overflow-y-auto">
-              {availableCourses.map((course) => (
+              {filteredCourses.map((course) => (
                 <div key={course.id} className="p-4 bg-gray-900 rounded-lg">
                   <div className="flex justify-between items-start mb-2">
                     <div>
