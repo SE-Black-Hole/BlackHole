@@ -16,6 +16,7 @@ class Course(BaseModel):
 class DegreePlan(BaseModel):
 	courses: List[str] = []
 	currentPlan: bool
+	planName: str
 	major: str
 	
 class Student(BaseModel):
