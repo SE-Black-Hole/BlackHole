@@ -1,4 +1,4 @@
-// Sofia Deichert
+// ManagePlans.jsx
 import { useState } from 'react';
 import {
   Plus,
@@ -10,66 +10,17 @@ import {
   Check,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { usePlans } from './PlansContext';
 
 const ManagePlans = () => {
   const navigate = useNavigate();
-
-  // TODO: Replace with API calls when backend is ready
-  const [plans, setPlans] = useState([
-    {
-      id: 1,
-      name: 'Computer Science BS',
-      isCurrentPlan: true,
-      totalCredits: 124,
-      completedCredits: 45,
-      expectedGraduation: 'Spring 2026',
-    },
-    {
-      id: 2,
-      name: 'Computer Science BS Plan 2',
-      isCurrentPlan: false,
-      totalCredits: 124,
-      completedCredits: 24,
-      expectedGraduation: 'Fall 2026',
-    },
-    {
-      id: 3,
-      name: 'Computer Science BS Plan 3',
-      isCurrentPlan: false,
-      totalCredits: 124,
-      completedCredits: 55,
-      expectedGraduation: 'Spring 2027',
-    },
-    {
-      id: 4,
-      name: 'Computer Science BS Plan 4',
-      isCurrentPlan: false,
-      totalCredits: 124,
-      completedCredits: 55,
-      expectedGraduation: 'Spring 2027',
-    },
-    {
-      id: 5,
-      name: 'Computer Science BS Plan 5',
-      isCurrentPlan: false,
-      totalCredits: 124,
-      completedCredits: 34,
-      expectedGraduation: 'Spring 2027',
-    },
-  ]);
-
+  const { plans, setCurrentPlan, deletePlan, addPlan } = usePlans();
   const [showNewPlanDialog, setShowNewPlanDialog] = useState(false);
   const [newPlanName, setNewPlanName] = useState('');
   const [activeDropdownId, setActiveDropdownId] = useState(null);
 
   const handleSetCurrentPlan = (planId) => {
-    // TODO: Replace with API call
-    setPlans(
-      plans.map((plan) => ({
-        ...plan,
-        isCurrentPlan: plan.id === planId,
-      }))
-    );
+    setCurrentPlan(planId);
     setActiveDropdownId(null);
   };
 
@@ -78,8 +29,7 @@ const ManagePlans = () => {
       'Are you sure you want to delete this plan?'
     );
     if (confirmed) {
-      // TODO: Replace with API call
-      setPlans(plans.filter((plan) => plan.id !== planId));
+      deletePlan(planId);
     }
     setActiveDropdownId(null);
   };
@@ -90,18 +40,17 @@ const ManagePlans = () => {
       return;
     }
 
-    // TODO: Replace with API call
     const newPlan = {
-      id: plans.length + 1,
+      id: Math.max(...plans.map((p) => p.id)) + 1,
       name: newPlanName,
       isCurrentPlan: false,
       totalCredits: 124,
       completedCredits: 0,
-      gpa: 0.0,
       expectedGraduation: 'TBD',
+      semesters: [],
     };
 
-    setPlans([...plans, newPlan]);
+    addPlan(newPlan);
     setNewPlanName('');
     setShowNewPlanDialog(false);
   };
@@ -110,7 +59,6 @@ const ManagePlans = () => {
     <div className="min-h-screen w-full bg-gradient-to-br from-black via-gray-900 to-gray-800 p-8">
       <div className="max-w-7xl mx-auto">
         <div className="backdrop-blur-sm bg-white/10 rounded-lg shadow-2xl border border-gray-700 overflow-hidden">
-          {/* Header */}
           <div className="bg-gradient-to-r from-black to-gray-800 px-8 py-6 flex justify-between items-center">
             <h1 className="text-white text-2xl font-bold">
               Manage Degree Plans
@@ -124,15 +72,25 @@ const ManagePlans = () => {
             </button>
           </div>
 
-          {/* Plans Grid */}
           <div className="p-8">
+            {/* Description Card */}
+            <div className="mb-8 bg-gradient-to-br from-gray-800/80 to-gray-900/80 rounded-lg border border-gray-700 p-6 shadow-lg">
+              <h2 className="text-lg font-medium text-white mb-2">
+                About Manage Plans
+              </h2>
+              <p className="text-gray-300 text-sm leading-relaxed">
+                Use this space to create, organize, and explore different degree
+                plans. Add new plans, edit existing ones, or experiment with
+                various paths to see what works best for you.
+              </p>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {plans.map((plan) => (
                 <div
                   key={plan.id}
                   className="backdrop-blur-sm bg-white/5 rounded-lg border border-gray-700 overflow-hidden hover:border-gray-600 transition-colors"
                 >
-                  {/* Plan Header */}
                   <div className="px-6 py-4 bg-gradient-to-r from-gray-800/50 to-black/50 flex justify-between items-start">
                     <div className="flex-1">
                       <div className="flex items-center">
@@ -145,12 +103,11 @@ const ManagePlans = () => {
                       </div>
                       {plan.isCurrentPlan && (
                         <span className="text-sm text-gray-400 mt-1">
-                          Current Plan
+                          Starred
                         </span>
                       )}
                     </div>
 
-                    {/* Actions Dropdown */}
                     <div className="relative">
                       <button
                         onClick={() =>
@@ -171,7 +128,7 @@ const ManagePlans = () => {
                               className="flex items-center w-full px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white"
                             >
                               <Check className="w-4 h-4 mr-2" />
-                              Set as Current
+                              Star Plan
                             </button>
                           )}
                           <button
@@ -191,16 +148,11 @@ const ManagePlans = () => {
                             <Trash2 className="w-4 h-4 mr-2" />
                             Delete
                           </button>
-                          <button className="flex items-center w-full px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white">
-                            <Download className="w-4 h-4 mr-2" />
-                            Export
-                          </button>
                         </div>
                       )}
                     </div>
                   </div>
 
-                  {/* Plan Stats */}
                   <div className="p-6 space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
@@ -221,7 +173,6 @@ const ManagePlans = () => {
                       </p>
                     </div>
 
-                    {/* Progress Bar */}
                     <div>
                       <div className="w-full bg-gray-700 rounded-full h-2">
                         <div
@@ -248,7 +199,6 @@ const ManagePlans = () => {
         </div>
       </div>
 
-      {/* New Plan Dialog */}
       {showNewPlanDialog && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-gray-800 rounded-lg shadow-xl border border-gray-700 w-full max-w-md p-6">

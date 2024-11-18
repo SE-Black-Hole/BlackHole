@@ -14,6 +14,7 @@ import ManagePlans from '../pages/ManagePlans';
 import PlanEditor from '../pages/PlanEditor';
 import PlanSchedule from '../pages/PlanSchedule';
 import CourseSearch from '../pages/CourseSearch';
+import { PlansProvider } from '../pages/PlansContext';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -30,99 +31,105 @@ function App() {
   };
 
   return (
-    <Router>
-      <Layout isLoggedIn={isLoggedIn} onLogout={handleLogout}>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              isLoggedIn ? (
-                <Home username={username} onLogout={handleLogout} />
-              ) : (
-                <Login onLogin={handleLogin} />
-              )
-            }
-          />
-          <Route path="/signup" element={<SignUp />} />
-          <Route
-            path="/home"
-            element={
-              isLoggedIn ? (
-                <Home username={username} onLogout={handleLogout} />
-              ) : (
-                <Login onLogin={handleLogin} />
-              )
-            }
-          />
-          <Route
-            path="/remaining-courses"
-            element={
-              isLoggedIn ? (
-                <RemainingCourses />
-              ) : (
-                <Login onLogin={handleLogin} />
-              )
-            }
-          />
-          <Route
-            path="/completed-courses"
-            element={
-              isLoggedIn ? (
-                <CompletedCourses />
-              ) : (
-                <Login onLogin={handleLogin} />
-              )
-            }
-          />
-          <Route
-            path="/account-settings"
-            element={
-              isLoggedIn ? (
-                <AccountSettings onLogout={handleLogout} />
-              ) : (
-                <Login onLogin={handleLogin} />
-              )
-            }
-          />
-          <Route
-            path="/dashboard"
-            element={
-              isLoggedIn ? <Dashboard /> : <Login onLogin={handleLogin} />
-            }
-          />
-          <Route
-            path="/plan-schedule"
-            element={
-              isLoggedIn ? <PlanSchedule /> : <Login onLogin={handleLogin} />
-            }
-          />
-          <Route
-            path="/flowchart"
-            element={
-              isLoggedIn ? <VisualFlowchart /> : <Login onLogin={handleLogin} />
-            }
-          />
-          <Route
-            path="/plan-management"
-            element={
-              isLoggedIn ? <ManagePlans /> : <Login onLogin={handleLogin} />
-            }
-          />
-          <Route
-            path="/plan-editor/:planId"
-            element={
-              isLoggedIn ? <PlanEditor /> : <Login onLogin={handleLogin} />
-            }
-          />
-          <Route
-            path="/course-search"
-            element={
-              isLoggedIn ? <CourseSearch /> : <Login onLogin={handleLogin} />
-            }
-          />
-        </Routes>
-      </Layout>
-    </Router>
+    <PlansProvider>
+      <Router>
+        <Layout isLoggedIn={isLoggedIn} onLogout={handleLogout}>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                isLoggedIn ? (
+                  <Home username={username} onLogout={handleLogout} />
+                ) : (
+                  <Login onLogin={handleLogin} />
+                )
+              }
+            />
+            <Route path="/signup" element={<SignUp />} />
+            <Route
+              path="/home"
+              element={
+                isLoggedIn ? (
+                  <Home username={username} onLogout={handleLogout} />
+                ) : (
+                  <Login onLogin={handleLogin} />
+                )
+              }
+            />
+            <Route
+              path="/remaining-courses"
+              element={
+                isLoggedIn ? (
+                  <RemainingCourses />
+                ) : (
+                  <Login onLogin={handleLogin} />
+                )
+              }
+            />
+            <Route
+              path="/completed-courses"
+              element={
+                isLoggedIn ? (
+                  <CompletedCourses />
+                ) : (
+                  <Login onLogin={handleLogin} />
+                )
+              }
+            />
+            <Route
+              path="/account-settings"
+              element={
+                isLoggedIn ? (
+                  <AccountSettings onLogout={handleLogout} />
+                ) : (
+                  <Login onLogin={handleLogin} />
+                )
+              }
+            />
+            <Route
+              path="/dashboard"
+              element={
+                isLoggedIn ? <Dashboard /> : <Login onLogin={handleLogin} />
+              }
+            />
+            <Route
+              path="/plan-schedule"
+              element={
+                isLoggedIn ? <PlanSchedule /> : <Login onLogin={handleLogin} />
+              }
+            />
+            <Route
+              path="/flowchart"
+              element={
+                isLoggedIn ? (
+                  <VisualFlowchart />
+                ) : (
+                  <Login onLogin={handleLogin} />
+                )
+              }
+            />
+            <Route
+              path="/plan-management"
+              element={
+                isLoggedIn ? <ManagePlans /> : <Login onLogin={handleLogin} />
+              }
+            />
+            <Route
+              path="/plan-editor/:planId"
+              element={
+                isLoggedIn ? <PlanEditor /> : <Login onLogin={handleLogin} />
+              }
+            />
+            <Route
+              path="/course-search"
+              element={
+                isLoggedIn ? <CourseSearch /> : <Login onLogin={handleLogin} />
+              }
+            />
+          </Routes>
+        </Layout>
+      </Router>
+    </PlansProvider>
   );
 }
 

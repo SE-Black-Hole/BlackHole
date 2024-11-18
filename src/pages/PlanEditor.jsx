@@ -1,22 +1,27 @@
-// Sofia Deichert
 import { useState, useEffect } from 'react';
 import { Plus, Trash2, Save, AlertTriangle, ArrowLeft } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { usePlans } from './PlansContext';
 
 const PlanEditor = () => {
   const { planId } = useParams();
   const navigate = useNavigate();
+  const { getPlan, updatePlan } = usePlans();
 
   const [plan, setPlan] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [selectedSemester, setSelectedSemester] = useState(null);
   const [showCourseSelector, setShowCourseSelector] = useState(false);
   const [prerequisiteErrors, setPrerequisiteErrors] = useState({});
   const [saving, setSaving] = useState(false);
 
-  // TODO: Replace with API call to fetch available courses
-  const [availableCourses] = useState([
+  // Define available courses
+  const availableCourses = [
+    {
+      id: 'Free Elective',
+      name: 'Free Elective',
+      credits: 3,
+      prerequisites: [],
+    },
     {
       id: 'ECS1100',
       name: 'Introduction to Engineering and Computer Science',
@@ -58,7 +63,7 @@ const PlanEditor = () => {
       id: 'PHYS2125',
       name: 'Physics Lab I',
       credits: 1,
-      prerequisites: ['PHYS2325'],
+      prerequisites: [],
     },
     {
       id: 'CS1337',
@@ -76,7 +81,7 @@ const PlanEditor = () => {
       id: 'PHYS2126',
       name: 'Physics Lab II',
       credits: 1,
-      prerequisites: ['PHYS2326'],
+      prerequisites: [],
     },
     {
       id: 'CS2336',
@@ -336,83 +341,17 @@ const PlanEditor = () => {
       credits: 3,
       prerequisites: ['SE4351'],
     },
-  ]);
+  ];
 
-  // Fetch plan data when component mounts
   useEffect(() => {
-    const fetchPlanData = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        // TODO: Replace with actual API call
-        // Simulating API response
-        const mockPlan = {
-          id: planId,
-          name: 'Computer Science BS',
-          totalCredits: 124,
-          completedCredits: 45,
-          expectedGraduation: 'Spring 2026',
-          semesters: [
-            {
-              id: 1,
-              name: 'Fall 2023',
-              courses: [
-                {
-                  id: 'CS1200',
-                  name: 'Intro to CS and SE',
-                  credits: 3,
-                  prerequisites: [],
-                  completed: true,
-                },
-                {
-                  id: 'CS1436',
-                  name: 'Programming Fundamentals',
-                  credits: 3,
-                  prerequisites: [],
-                  completed: true,
-                },
-              ],
-            },
-            {
-              id: 2,
-              name: 'Spring 2024',
-              courses: [
-                {
-                  id: 'CS2305',
-                  name: 'Discrete Mathematics I',
-                  credits: 3,
-                  prerequisites: ['CS1436'],
-                  completed: false,
-                },
-                {
-                  id: 'CS2336',
-                  name: 'Computer Science II',
-                  credits: 3,
-                  prerequisites: ['CS1436'],
-                  completed: false,
-                },
-              ],
-            },
-          ],
-        };
-
-        // Simulate network delay
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        setPlan(mockPlan);
-      } catch (err) {
-        setError('Failed to fetch plan data. Please try again later.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPlanData();
-  }, [planId]);
+    const currentPlan = getPlan(parseInt(planId));
+    if (currentPlan) {
+      setPlan(currentPlan);
+    }
+  }, [planId, getPlan]);
 
   const checkPrerequisites = (course, semesterId) => {
     const completedCourses = new Set();
-
-    // Get all completed courses and courses from previous semesters
     plan.semesters.forEach((semester) => {
       if (semester.id < semesterId) {
         semester.courses.forEach((c) => {
@@ -420,7 +359,6 @@ const PlanEditor = () => {
         });
       }
     });
-
     return course.prerequisites.filter(
       (prereq) => !completedCourses.has(prereq)
     );
@@ -437,56 +375,117 @@ const PlanEditor = () => {
       return;
     }
 
-    try {
-      // TODO: Replace with actual API call
-      setPlan((prevPlan) => ({
-        ...prevPlan,
-        semesters: prevPlan.semesters.map((semester) => {
-          if (semester.id === semesterId) {
-            return {
-              ...semester,
-              courses: [...semester.courses, { ...course, completed: false }],
-            };
-          }
-          return semester;
-        }),
-      }));
+    setPlan((prevPlan) => {
+      // Add course to semester
+      const updatedSemesters = prevPlan.semesters.map((semester) => {
+        if (semester.id === semesterId) {
+          return {
+            ...semester,
+            courses: [...semester.courses, { ...course, completed: false }],
+          };
+        }
+        return semester;
+      });
 
-      setShowCourseSelector(false);
-      setPrerequisiteErrors({});
-    } catch (err) {
-      alert('Failed to add course. Please try again.');
-    }
+      // Calculate total credits from all courses
+      const totalCompletedCredits = updatedSemesters.reduce(
+        (total, semester) => {
+          return (
+            total +
+            semester.courses.reduce(
+              (semTotal, course) => semTotal + course.credits,
+              0
+            )
+          );
+        },
+        0
+      );
+
+      // Calculate remaining credits
+      const remainingCredits = 124 - totalCompletedCredits;
+      const semestersNeeded = Math.ceil(remainingCredits / 15);
+      let expectedGraduation = calculateExpectedGraduation(semestersNeeded);
+
+      return {
+        ...prevPlan,
+        semesters: updatedSemesters,
+        completedCredits: totalCompletedCredits,
+        expectedGraduation,
+      };
+    });
+    setShowCourseSelector(false);
+    setPrerequisiteErrors({});
   };
 
   const handleRemoveCourse = async (courseId, semesterId) => {
-    try {
-      // TODO: Replace with actual API call
-      setPlan((prevPlan) => ({
+    setPlan((prevPlan) => {
+      // Remove course from semester
+      const updatedSemesters = prevPlan.semesters.map((semester) => {
+        if (semester.id === semesterId) {
+          return {
+            ...semester,
+            courses: semester.courses.filter(
+              (course) => course.id !== courseId
+            ),
+          };
+        }
+        return semester;
+      });
+
+      // Calculate total credits from remaining courses
+      const totalCompletedCredits = updatedSemesters.reduce(
+        (total, semester) => {
+          return (
+            total +
+            semester.courses.reduce(
+              (semTotal, course) => semTotal + course.credits,
+              0
+            )
+          );
+        },
+        0
+      );
+
+      // Calculate remaining credits and expected graduation
+      const remainingCredits = 124 - totalCompletedCredits;
+      const semestersNeeded = Math.ceil(remainingCredits / 15);
+      let expectedGraduation = calculateExpectedGraduation(semestersNeeded);
+
+      return {
         ...prevPlan,
-        semesters: prevPlan.semesters.map((semester) => {
-          if (semester.id === semesterId) {
-            return {
-              ...semester,
-              courses: semester.courses.filter(
-                (course) => course.id !== courseId
-              ),
-            };
-          }
-          return semester;
-        }),
-      }));
-    } catch (err) {
-      alert('Failed to remove course. Please try again.');
+        semesters: updatedSemesters,
+        completedCredits: totalCompletedCredits,
+        expectedGraduation,
+      };
+    });
+  };
+
+  const calculateExpectedGraduation = (semestersNeeded) => {
+    // Start from Fall 2024
+    let currentSeason = 'Fall';
+    let currentYear = 2024;
+
+    for (let i = 0; i < semestersNeeded; i++) {
+      if (currentSeason === 'Fall') {
+        currentSeason = 'Spring';
+        currentYear++;
+      } else {
+        currentSeason = 'Fall';
+      }
     }
+
+    return `${currentSeason} ${currentYear}`;
   };
 
   const handleSaveChanges = async () => {
     setSaving(true);
     try {
-      // TODO: Replace with actual API call
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
-      alert('Changes saved successfully!');
+      // Preserve the calculated expected graduation date instead of overwriting it
+      const updatedPlan = {
+        ...plan,
+        // Remove the expectedGraduation override so it keeps the calculated value
+      };
+      updatePlan(updatedPlan);
       navigate('/plan-management');
     } catch (err) {
       alert('Failed to save changes. Please try again.');
@@ -496,40 +495,37 @@ const PlanEditor = () => {
   };
 
   const handleAddSemester = async () => {
-    try {
-      // TODO: Replace with actual API call
-      const newSemesterId = Math.max(...plan.semesters.map((s) => s.id)) + 1;
-      setPlan((prevPlan) => ({
+    setPlan((prevPlan) => {
+      const newSemesterId =
+        Math.max(...prevPlan.semesters.map((s) => s.id), 0) + 1;
+      const lastSemester = prevPlan.semesters[prevPlan.semesters.length - 1];
+
+      // Calculate next semester name (excluding summer)
+      let nextSemesterName = 'Fall 2024'; // Default if no previous semester
+      if (lastSemester) {
+        const [season, year] = lastSemester.name.split(' ');
+        const nextYear = parseInt(year);
+        const seasons = ['Spring', 'Fall'];
+        const currentIndex = seasons.indexOf(season);
+        const nextSeason = seasons[(currentIndex + 1) % 2];
+        nextSemesterName = `${nextSeason} ${
+          nextYear + (nextSeason === 'Spring' ? 1 : 0)
+        }`;
+      }
+
+      return {
         ...prevPlan,
         semesters: [
           ...prevPlan.semesters,
           {
             id: newSemesterId,
-            name: `New Semester ${newSemesterId}`,
+            name: nextSemesterName,
             courses: [],
           },
         ],
-      }));
-    } catch (err) {
-      alert('Failed to add semester. Please try again.');
-    }
+      };
+    });
   };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen w-full bg-gradient-to-br from-black via-gray-900 to-gray-800 p-8 flex items-center justify-center">
-        <div className="text-white text-xl">Loading plan...</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen w-full bg-gradient-to-br from-black via-gray-900 to-gray-800 p-8 flex items-center justify-center">
-        <div className="text-red-400 text-xl">Error: {error}</div>
-      </div>
-    );
-  }
 
   if (!plan) {
     return (
@@ -543,7 +539,6 @@ const PlanEditor = () => {
     <div className="min-h-screen w-full bg-gradient-to-br from-black via-gray-900 to-gray-800 p-8">
       <div className="max-w-7xl mx-auto">
         <div className="backdrop-blur-sm bg-white/10 rounded-lg shadow-2xl border border-gray-700 overflow-hidden">
-          {/* Header */}
           <div className="bg-gradient-to-r from-black to-gray-800 px-8 py-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
@@ -574,7 +569,6 @@ const PlanEditor = () => {
             </div>
           </div>
 
-          {/* Semesters Grid */}
           <div className="p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {plan.semesters.map((semester) => (
               <div
@@ -588,7 +582,6 @@ const PlanEditor = () => {
                 </div>
 
                 <div className="p-4">
-                  {/* Course List */}
                   <div className="space-y-3 mb-4">
                     {semester.courses.map((course) => (
                       <div
@@ -615,7 +608,6 @@ const PlanEditor = () => {
                     ))}
                   </div>
 
-                  {/* Add Course Button */}
                   <button
                     onClick={() => {
                       setSelectedSemester(semester.id);
@@ -630,7 +622,6 @@ const PlanEditor = () => {
               </div>
             ))}
 
-            {/* Add Semester Button */}
             <button
               onClick={handleAddSemester}
               className="h-48 flex flex-col items-center justify-center backdrop-blur-sm bg-white/5 rounded-lg border border-gray-700 border-dashed hover:border-gray-500 hover:bg-white/10 transition-all"
@@ -642,7 +633,6 @@ const PlanEditor = () => {
         </div>
       </div>
 
-      {/* Course Selector Modal */}
       {showCourseSelector && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-gray-800 rounded-lg shadow-xl border border-gray-700 w-full max-w-md p-6">
@@ -716,7 +706,7 @@ const PlanEditor = () => {
               Remaining Credits
             </h3>
             <p className="text-3xl font-bold text-red-400">
-              {plan.totalCredits - plan.completedCredits}
+              {124 - plan.completedCredits}
             </p>
           </div>
           <div className="backdrop-blur-sm bg-white/10 rounded-lg border border-gray-700 p-6">
