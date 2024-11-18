@@ -4,7 +4,7 @@ from sys import maxsize
 
 class Generator(object):
 
-    def __init__(self, poset, time_required=1):
+    def __init__(self, poset, time_required=0):
          #userReqCourses is an array of arrays within each is 'index of semester, [array of classes] 
 
         self.semesters = []
@@ -67,6 +67,15 @@ class Generator(object):
         # print(len(plan), credits)
         return credits
     
+    def get_credits_per_semester(self):
+        credits = []
+        
+        for semester in self.semesters:
+            credits.append(semester.get_credits())
+        
+        # print(len(plan), credits)
+        return credits
+    
     def generate_shortest_plans(self):
         plans = []
 
@@ -83,7 +92,7 @@ class Generator(object):
             print("Error: reached timeout")
             return []
         
-        self.average_credits = self.total_credits_left / self.time_required
+        self.average_credits = ceil(self.total_credits_left / self.time_required)
     
         return plans
 
@@ -115,8 +124,8 @@ class Generator(object):
             self.semesters.append(Semester())
         
    
-    def append_semester(self):
-        self.semesters.append(Semester())
+    def append_semester(self, min=0, max=16):
+        self.semesters.append(Semester(min,max))
         self.time_required += 1
 
     def update_poset(self, classes_taken):
@@ -142,6 +151,56 @@ class Generator(object):
         #         break
         # print("time:", self.time_required)
         self.create_semesters(self.time_required)
+
+    def get_quick_low_deviation_plan(self,max=16):
+        # print(self.poset.get_str_courses_by_time())
+        while len(self.poset.courses_by_time[0]):
+            # print(self.poset.get_str_courses_by_time())
+            self.append_semester(max=max)
+            self.poset.courses_by_time[0] = sorted(self.poset.courses_by_time[0], key= lambda course : course.height)
+            # print(self.poset.courses_by_time[0][-1].preOf[0] == self.poset.courses_by_time[1][-1])
+            # print(self.poset.get_str_courses_by_time())
+            self.poset.update_semesters_required(self.semesters[-1].setup_quick_schedule(self.poset.courses_by_time[0]))
+            # print("ha")
+            # print(self.poset.get_str_courses_by_time())
+        # print("AHOHAHAOAHAOH")
+        # print(self.poset.get_str_courses_by_time())
+        # print(self.poset.get_str_courses_by_time())
+        plan = []
+        print(self.get_credits_per_semester())
+        for i in self.semesters:
+            plan.append(i.get_current_courses())
+        print(plan)
+        for i in range(len(self.semesters) - 1): # it does not check for all free credit hours like 3,2,1. It just picks the last in the list
+            while self.semesters[i].can_move_courses:
+                # print("Trying to move a course")
+                least_credits = self.semesters[i + 1].current_credit_hours
+                semester = self.semesters[i + 1]
+                for j in self.semesters[i + 2:]:
+                    if j.current_credit_hours < least_credits:
+                        least_credits = j.current_credit_hours
+                        semester = j
+
+                credits = self.semesters[i].current_courses[-1].credits
+                # print(semester.current_credit_hours + credits <= semester.max_credit_hours, self.semesters[i].current_credit_hours, 
+                # abs(self.semesters[i].current_credit_hours - semester.current_credit_hours),
+                # abs(self.semesters[i].current_credit_hours - 2*credits - semester.current_credit_hours))
+                if semester.current_credit_hours + credits <= semester.max_credit_hours and \
+                abs(self.semesters[i].current_credit_hours - semester.current_credit_hours) > \
+                abs(self.semesters[i].current_credit_hours - 2*credits - semester.current_credit_hours):
+                    semester.add_taken_course(self.semesters[i].current_courses[-1])
+                    # print(self.semesters[i].get_current_courses())
+                    self.semesters[i].remove_taken_course(self.semesters[i].current_courses[-1])
+                else:
+                    break
+
+        print(self.get_credits_per_semester())
+        plan = []
+        for i in self.semesters:
+            plan.append(i.get_current_courses())
+        # print(plan)
+        return plan
+
 
     def get_new_list(self):
         plan = []

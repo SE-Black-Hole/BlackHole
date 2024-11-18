@@ -12,6 +12,7 @@ class Semester:
         self.previous_courses = []
         self.current_credit_hours = 0
         
+        self.can_move_courses = 0
         self.index_courses = []
         self.coreqs_duo = []
         self.can_make_schedule = False
@@ -203,6 +204,29 @@ class Semester:
     def get_credits(self):
         return self.current_credit_hours
 
+    def setup_quick_schedule(self, courses_avail):
+        courses_to_update = []
+        for course in reversed(courses_avail):
+            if self.current_credit_hours + course.credits <= self.max_credit_hours:
+                self.current_courses.append(course)
+                self.current_credit_hours += course.credits
+                if not self.current_courses[-1].height:
+                    self.can_move_courses += 1
+                courses_to_update += course.take_drop()
+        
+        return courses_to_update
+    
+    def remove_taken_course(self, course):
+        # print('inside remove course')
+        # print(course)
+        # print(self.get_current_courses())
+        self.current_courses.remove(course)
+        self.current_credit_hours -= course.credits
+        self.can_move_courses -= 1
+
+    def add_taken_course(self, course):
+        self.current_courses.append(course)
+        self.current_credit_hours += course.credits
 # semester = Semester()
     
 

@@ -51,15 +51,16 @@ class Poset(object):
             if course in self.courses_by_time[course.previous_semesters_required]:
                 self.courses_by_time[course.previous_semesters_required].remove(course)
                 self.courses_by_time[course.semesters_required].append(course)
+                course.previous_semesters_required = course.semesters_required
 
     def __str__(self):
         string = ""
         for n in self.requiredByDegree:
             string += str(n) + "\n\n"
-
+        string += "\n"
         for n in self.core:
             string += str(n) + "\n\n"
-
+        string += "\n"
         for n in self.electives:
             string += str(n) + "\n\n"
         return string
@@ -97,20 +98,21 @@ class Node(object):
     def set_semesters_required(self, num_courses):
         if self.semesters_required < num_courses:
             self.semesters_required = num_courses
+            self.previous_semesters_required = num_courses
             for node in self.preOf:
                  node.set_semesters_required(num_courses + 1)
 
-    def update_semesters_required(self, updated_courses, first):
+    def update_semesters_required(self, updated_courses):
 
         semesters_required = self.semesters_required
         new_index = max(self.pre,key=lambda course: course.semesters_required).semesters_required + 1
         self.semesters_required = 0 if new_index < 0 else new_index
         if semesters_required != self.semesters_required:
             updated_courses.append(self)
-            self.previous_semesters_required = semesters_required
-            if first:
-                for course in self.preOf:
-                    course.update_semesters_required(updated_courses, False)
+            # self.previous_semesters_required = semesters_required
+            # if first:
+            #     for course in self.preOf:
+            #         course.update_semesters_required(updated_courses, False)
 
     def check_if_coreq_available(self):
         if not len(self.coOf):
@@ -147,7 +149,7 @@ class Node(object):
 
         courses_to_update.append(self)
         for course in self.preOf:
-            course.update_semesters_required(courses_to_update, True)
+            course.update_semesters_required(courses_to_update)
 
         return courses_to_update
             
