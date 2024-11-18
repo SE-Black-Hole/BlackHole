@@ -1,5 +1,5 @@
 // Sofia Deichert
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   PieChart,
   Pie,
@@ -11,107 +11,196 @@ import {
 } from 'recharts';
 
 const Dashboard = () => {
-  // TODO: Replace with actual API calls/database data
-  const degreeProgress = {
-    creditHours: {
-      completed: 37,
-      remaining: 87,
-      total: 124,
-    },
-    coreCurriculum: {
-      completed: 24,
-      remaining: 18,
-      total: 42,
-    },
+  const [degreeProgress, setDegreeProgress] = useState({
+    creditHours: { completed: 0, remaining: 0, total: 135 },
+    coreCurriculum: { completed: 24, remaining: 18, total: 42 },
     majorRequirements: {
-      preparatory: {
-        completed: 12,
-        remaining: 12,
-        total: 24,
-      },
-      core: {
-        completed: 15,
-        remaining: 21,
-        total: 36,
-      },
-      technicalElectives: {
-        completed: 3,
-        remaining: 9,
-        total: 12,
-      },
+      preparatory: { completed: 0, remaining: 0, total: 39 },
+      core: { completed: 24, remaining: 18, total: 42 },
+      technicalElectives: { completed: 0, remaining: 0, total: 12 },
     },
-    electives: {
-      completed: 4,
-      remaining: 6,
-      total: 10,
-    },
-  };
+    electives: { completed: 7, remaining: 3, total: 10 },
+  });
 
-  // Calculate percentages for the main progress circle
-  const totalProgress = Math.round(
-    (degreeProgress.creditHours.completed / degreeProgress.creditHours.total) *
-      100
-  );
+  const [creditHoursData, setCreditHoursData] = useState([]);
 
-  // Data for the credit hours breakdown with percentages
-  const creditHoursData = [
-    {
-      name: 'Core Curriculum',
-      percentage: Math.round(
-        (degreeProgress.coreCurriculum.completed /
-          degreeProgress.coreCurriculum.total) *
-          100
-      ),
-      completed: degreeProgress.coreCurriculum.completed,
-      total: degreeProgress.coreCurriculum.total,
-      fill: '#60A5FA',
-    },
-    {
-      name: 'Major Prep',
-      percentage: Math.round(
-        (degreeProgress.majorRequirements.preparatory.completed /
-          degreeProgress.majorRequirements.preparatory.total) *
-          100
-      ),
-      completed: degreeProgress.majorRequirements.preparatory.completed,
-      total: degreeProgress.majorRequirements.preparatory.total,
-      fill: '#34D399',
-    },
-    {
-      name: 'Major Core',
-      percentage: Math.round(
-        (degreeProgress.majorRequirements.core.completed /
-          degreeProgress.majorRequirements.core.total) *
-          100
-      ),
-      completed: degreeProgress.majorRequirements.core.completed,
-      total: degreeProgress.majorRequirements.core.total,
-      fill: '#818CF8',
-    },
-    {
-      name: 'Tech Electives',
-      percentage: Math.round(
-        (degreeProgress.majorRequirements.technicalElectives.completed /
-          degreeProgress.majorRequirements.technicalElectives.total) *
-          100
-      ),
-      completed: degreeProgress.majorRequirements.technicalElectives.completed,
-      total: degreeProgress.majorRequirements.technicalElectives.total,
-      fill: '#FBBF24',
-    },
-    {
-      name: 'Free Electives',
-      percentage: Math.round(
-        (degreeProgress.electives.completed / degreeProgress.electives.total) *
-          100
-      ),
-      completed: degreeProgress.electives.completed,
-      total: degreeProgress.electives.total,
-      fill: '#EC4899',
-    },
-  ];
+  useEffect(() => {
+    const fetchCompletedCourses = async () => {
+      try {
+        const completedResponse = await fetch(
+          'http://localhost:5000/get-completed-courses'
+        );
+        const completedData = await completedResponse.json();
 
-  // Custom tooltip for the credit hours breakdown
+        const remainingResponse = await fetch(
+          'http://localhost:5000/get-remaining-courses'
+        );
+        const remainingData = await remainingResponse.json();
+
+        if (completedData.completed_courses_details) {
+          const completedCourses = completedData.completed_courses_details;
+          const remainingCourses = remainingData.remaining_courses_details || [];
+
+          const majorPrepCourses = [
+            'ECS 1100',
+            'CS 1200',
+            'CS 1436',
+            'MATH 2413',
+            'CS 2305',
+            'MATH 2414',
+            'PHYS 2325',
+            'PHYS 2125',
+            'CS 1337',
+            'PHYS 2326',
+            'PHYS 2126',
+            'CS 2336',
+            'CS 2340',
+            'MATH 2418',
+          ];
+          const majorCoreCourses = [
+            'CS 3162',
+            'CS 3341',
+            'CS 3345',
+            'CS 3354',
+            'CS 3377',
+            'ECS 2390',
+            'CS 4141',
+            'CS 4337',
+            'CS 4341',
+            'CS 4347',
+            'CS 4348',
+            'CS 4349',
+            'CS 4384',
+            'CS 4485',
+          ];
+
+          const completedMajorPrep = completedCourses
+            .filter((course) => majorPrepCourses.includes(course.classNumber))
+            .reduce((sum, course) => sum + course.creditHours, 0);
+
+          const completedMajorCore = completedCourses
+            .filter((course) => majorCoreCourses.includes(course.classNumber))
+            .reduce((sum, course) => sum + course.creditHours, 0);
+
+          const completedTechElectives = completedCourses
+            .filter(
+              (course) =>
+                !majorPrepCourses.includes(course.classNumber) &&
+                !majorCoreCourses.includes(course.classNumber)
+            )
+            .reduce((sum, course) => sum + course.creditHours, 0);
+
+          const totalCompletedCreditHours = completedCourses.reduce(
+            (sum, course) => sum + course.creditHours,
+            0
+          );
+
+          setDegreeProgress((prev) => {
+            const completedCreditHours = 
+              completedMajorPrep + completedMajorCore + completedTechElectives + prev.electives.completed +24;
+          
+            const remainingCreditHours = prev.creditHours.total - completedCreditHours;
+            const progressPercentage = Math.round(
+              (completedCreditHours / prev.creditHours.total) * 100
+            );
+          
+            return {
+              ...prev,
+              creditHours: {
+                ...prev.creditHours,
+                completed: completedCreditHours,
+                remaining: remainingCreditHours,
+              },
+              majorRequirements: {
+                preparatory: {
+                  completed: completedMajorPrep,
+                  remaining: prev.majorRequirements.preparatory.total - completedMajorPrep,
+                  total: 39,
+                },
+                core: {
+                  completed: completedMajorCore,
+                  remaining: prev.majorRequirements.core.total - completedMajorCore,
+                  total: 42,
+                },
+                technicalElectives: {
+                  completed: completedTechElectives,
+                  remaining: prev.majorRequirements.technicalElectives.total - completedTechElectives,
+                  total: 12,
+                },
+              },
+              progressPercentage,
+            };
+          });
+          
+        }
+      } catch (error) {
+        console.error('Error fetching course data:', error);
+      }
+    };
+
+    fetchCompletedCourses();
+  }, []);
+  
+
+  useEffect(() => {
+    setCreditHoursData([
+      {
+        name: 'Core Curriculum',
+        percentage: Math.round(
+          (degreeProgress.coreCurriculum.completed /
+            degreeProgress.coreCurriculum.total) *
+            100
+        ),
+        completed: degreeProgress.coreCurriculum.completed,
+        total: degreeProgress.coreCurriculum.total,
+        fill: '#60A5FA',
+      },
+      {
+        name: 'Major Prep',
+        percentage: Math.round(
+          (degreeProgress.majorRequirements.preparatory.completed /
+            degreeProgress.majorRequirements.preparatory.total) *
+            100
+        ),
+        completed: degreeProgress.majorRequirements.preparatory.completed,
+        total: degreeProgress.majorRequirements.preparatory.total,
+        fill: '#34D399',
+      },
+      {
+        name: 'Major Core',
+        percentage: Math.round(
+          (degreeProgress.majorRequirements.core.completed /
+            degreeProgress.majorRequirements.core.total) *
+            100
+        ),
+        completed: degreeProgress.majorRequirements.core.completed,
+        total: degreeProgress.majorRequirements.core.total,
+        fill: '#818CF8',
+      },
+      {
+        name: 'Tech Electives',
+        percentage: Math.round(
+          (degreeProgress.majorRequirements.technicalElectives.completed /
+            degreeProgress.majorRequirements.technicalElectives.total) *
+            100
+        ),
+        completed: degreeProgress.majorRequirements.technicalElectives.completed,
+        total: degreeProgress.majorRequirements.technicalElectives.total,
+        fill: '#FBBF24',
+      },
+      {
+        name: 'Free Electives',
+        percentage: Math.round(
+          (degreeProgress.electives.completed / degreeProgress.electives.total) *
+            100
+        ),
+        completed: degreeProgress.electives.completed,
+        total: degreeProgress.electives.total,
+        fill: '#EC4899',
+      },
+    ]);
+  }, [degreeProgress]);
+
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
@@ -201,7 +290,7 @@ const Dashboard = () => {
                     </ResponsiveContainer>
                   </div>
                   <div className="text-center">
-                    <p className="text-4xl font-bold text-white mb-1">30%</p>
+                    <p className="text-4xl font-bold text-white mb-1">{degreeProgress.progressPercentage}%</p>
                     <p className="text-blue-300 text-lg">Total Progress</p>
                   </div>
                 </div>

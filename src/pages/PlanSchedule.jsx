@@ -145,7 +145,7 @@ const PlanSchedule = () => {
         navigate('/flowchart', { state: { remainingCourses: flowchartCourses } });
     };
 
-    const handleViewCourses = (type) => {
+    const handleViewCourses = async (type) => {
         const completedCoursesList = Array.from(completedCourses)
             .map(courseNumber => {
                 const course = mainCourses.concat(guidedElectives).find(course => course.classNumber === courseNumber);
@@ -161,17 +161,19 @@ const PlanSchedule = () => {
             .filter(Boolean);
     
         const uncompletedMainCourses = mainCourses.filter(course => !completedCourses.has(course.classNumber));
-    
         const randomGuidedElectives = getRandomGuidedElectives(4);
-    
         const remainingCourses = [...uncompletedMainCourses, ...randomGuidedElectives];
-        
-        sendCoursesToBackend(completedCoursesList, remainingCourses);
-        
-        if (type === 'completed') {
-            navigate('/completed-courses', { state: { completedCourses: completedCoursesList } });
-        } else if (type === 'remaining') {
-            navigate('/remaining-courses', { state: { remainingCourses } });
+    
+        try {
+            await sendCoursesToBackend(completedCoursesList, remainingCourses);
+    
+            if (type === 'completed') {
+                navigate('/completed-courses', { state: { completedCourses: completedCoursesList } });
+            } else if (type === 'remaining') {
+                navigate('/remaining-courses', { state: { remainingCourses } });
+            }
+        } catch (error) {
+            console.error("Error while sending courses to backend:", error);
         }
     };
     

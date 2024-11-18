@@ -1,22 +1,42 @@
-import React, { useState, useMemo } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useEffect, useState, useMemo } from 'react';
 import ReactFlow, { MiniMap, Background } from 'reactflow';
 import 'reactflow/dist/style.css';
 
 const MAX_CLASSES_PER_SEMESTER = 6;
 
 const Flowchart = () => {
-    const location = useLocation();
-    const remainingCourses = location.state?.remainingCourses || [];
-
+    const [remainingCourses, setRemainingCourses] = useState([]);
     const [classesPerSemester, setClassesPerSemester] = useState(MAX_CLASSES_PER_SEMESTER);
     const [currentPage, setCurrentPage] = useState(0);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     const totalPages = Math.ceil(remainingCourses.length / classesPerSemester);
 
+    useEffect(() => {
+        const fetchRemainingCourses = async () => {
+            try {
+                const response = await fetch('http://localhost:5000/get-remaining-courses');
+                if (response.ok) {
+                    const data = await response.json();
+                    setRemainingCourses(data.remaining_courses_details || []);
+                } else {
+                    const errorData = await response.json();
+                    setError(errorData.message || 'Failed to fetch courses');
+                }
+            } catch (err) {
+                setError('An unexpected error occurred: ' + err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchRemainingCourses();
+    }, []);
+
     const handleClassesPerSemesterChange = (e) => {
         setClassesPerSemester(Number(e.target.value));
-        setCurrentPage(0); // Reset to the first page
+        setCurrentPage(0); 
     };
 
     const paginatedCourses = useMemo(
@@ -32,7 +52,7 @@ const Flowchart = () => {
         return paginatedCourses.map((course, index) => ({
             id: course.classNumber,
             data: { label: `${course.className} (${course.classNumber})` },
-            position: { x: index * 250, y: 50 }, // Adjusted for horizontal layout
+            position: { x: index * 250, y: 50 }, 
             style: {
                 backgroundColor: '#1E40AF',
                 color: '#fff',
@@ -59,6 +79,22 @@ const Flowchart = () => {
     const goToNextPage = () => {
         setCurrentPage((prev) => Math.min(prev + 1, totalPages - 1));
     };
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex justify-center items-center bg-gray-800 text-white">
+                <p>Loading...</p>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="min-h-screen flex justify-center items-center bg-gray-800 text-white">
+                <p>Error: {error}</p>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen w-full bg-gradient-to-br from-black via-gray-900 to-gray-800 p-8">
