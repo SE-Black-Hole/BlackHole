@@ -12,6 +12,7 @@ class Course(BaseModel):
 	prerequisites: List[str] = []
 	corequisites: List[str] = []
 	isMajorElective: bool = False
+	description: str
 	
 class DegreePlan(BaseModel):
 	courses: List[str] = []
