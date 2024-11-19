@@ -16,7 +16,7 @@ const Dashboard = () => {
     coreCurriculum: { completed: 24, remaining: 18, total: 42 },
     majorRequirements: {
       preparatory: { completed: 0, remaining: 0, total: 39 },
-      core: { completed: 24, remaining: 18, total: 42 },
+      core: { completed: 0, remaining: 0, total: 42 },
       technicalElectives: { completed: 0, remaining: 0, total: 12 },
     },
     electives: { completed: 7, remaining: 3, total: 10 },

@@ -19,9 +19,10 @@ class DataManager:
         print('Connection successful!')
         
     def get_all_classes(self):
-        return [Course(**document) for document in self.db.classes.find()]
+        return [Course(**document).dict() for document in self.db.classes.find()]
         
-    def get_all_classes_for_major(self, major):
+    def get_all_classes_for_major(self, major: str):
+        major = "CS"
         return [Course(**document) for document in self.db.classes.find({'major': major})]
         
     def get_class(self, classNumber):

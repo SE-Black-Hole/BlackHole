@@ -56,6 +56,18 @@ def get_remaining_courses():
             return jsonify({"message": "No completed courses found for this student."}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+@app.route('/get-all-courses', methods=['GET', 'OPTIONS'])
+def get_all_courses():
+    try:
+        result = data_manager.get_all_classes()
+
+        if result is None:
+            return jsonify({"message": "No classes found"}), 404
+        else:
+            return jsonify({"all_courses_details": result}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 if __name__ == '__main__':
