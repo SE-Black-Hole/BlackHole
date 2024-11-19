@@ -24,17 +24,14 @@ const CourseSearch = () => {
             const [_, prefixA, numberA] = matchA;
             const [__, prefixB, numberB] = matchB;
     
-            // First, compare prefixes (e.g., "CS", "MATH")
             const prefixComparison = prefixA.localeCompare(prefixB);
             if (prefixComparison !== 0) {
               return prefixComparison;
             }
     
-            // Then, compare the numeric parts as numbers
             return parseInt(numberA, 10) - parseInt(numberB, 10);
           }
     
-          // If no match, keep original order (fallback)
           return 0;
         });
 
@@ -51,7 +48,7 @@ const CourseSearch = () => {
   const filteredCourses = searchTerm
     ? courses.filter(
         (course) =>
-          course.classnumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          course.classNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
           course.className.toLowerCase().includes(searchTerm.toLowerCase())
       )
     : courses;
