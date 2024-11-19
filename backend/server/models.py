@@ -8,6 +8,7 @@ class Course(BaseModel):
 	_id: str
 	classNumber: str
 	className: str
+	creditHours: int
 	major: str
 	prerequisites: List[str] = []
 	corequisites: List[str] = []
