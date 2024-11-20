@@ -13,16 +13,30 @@ import {
 const Dashboard = () => {
   const [degreeProgress, setDegreeProgress] = useState({
     creditHours: { completed: 0, remaining: 0, total: 135 },
-    coreCurriculum: { completed: 24, remaining: 18, total: 42 },
+    coreCurriculum: { completed: 0, remaining: 0, total: 42 },
     majorRequirements: {
       preparatory: { completed: 0, remaining: 0, total: 39 },
       core: { completed: 0, remaining: 0, total: 42 },
       technicalElectives: { completed: 0, remaining: 0, total: 12 },
     },
-    electives: { completed: 7, remaining: 3, total: 10 },
+    electives: { completed: 0, remaining: 0, total: 10 },
   });
 
   const [creditHoursData, setCreditHoursData] = useState([]);
+  const coreCurriculumCourses = [
+    { classNumber: 'CORE 101', creditHours: 3 },
+    { classNumber: 'CORE 102', creditHours: 3 },
+    { classNumber: 'CORE 103', creditHours: 3 },
+    { classNumber: 'CORE 104', creditHours: 3 },
+    { classNumber: 'CORE 105', creditHours: 3 },
+    { classNumber: 'CORE 106', creditHours: 3 },
+    { classNumber: 'CORE 107', creditHours: 3 },
+    { classNumber: 'CORE 108', creditHours: 3 },
+  ];
+  const electiveCourses = [
+    { classNumber: 'ELEC 201', creditHours: 3 },
+    { classNumber: 'ELEC 202', creditHours: 4 },
+  ];
 
   useEffect(() => {
     const fetchCompletedCourses = async () => {
@@ -73,27 +87,48 @@ const Dashboard = () => {
             'CS 4384',
             'CS 4485',
           ];
-
-          const completedMajorPrep = completedCourses
-            .filter((course) => majorPrepCourses.includes(course.classNumber))
-            .reduce((sum, course) => sum + course.creditHours, 0);
-
-          const completedMajorCore = completedCourses
-            .filter((course) => majorCoreCourses.includes(course.classNumber))
-            .reduce((sum, course) => sum + course.creditHours, 0);
-
-          const completedTechElectives = completedCourses
-            .filter(
+          const calculateCredits = (courses) =>
+            courses.reduce((sum, course) => sum + course.creditHours, 0);
+          
+          const completedCoreCurriculum = calculateCredits(
+            completedCourses.filter((course) =>
+              coreCurriculumCourses.some((core) => core.classNumber === course.classNumber)
+            )
+          );
+          const totalCoreCredits = calculateCredits(coreCurriculumCourses);
+  
+          // Calculate Electives
+          const completedElectives = calculateCredits(
+            completedCourses.filter((course) =>
+              electiveCourses.some((elective) => elective.classNumber === course.classNumber)
+            )
+          );
+          const totalElectiveCredits = calculateCredits(electiveCourses);
+          
+          const completedMajorPrep = calculateCredits(
+            completedCourses.filter((course) => majorPrepCourses.includes(course.classNumber))
+          );
+  
+          const completedMajorCore = calculateCredits(
+            completedCourses.filter((course) => majorCoreCourses.includes(course.classNumber))
+          );
+  
+          const completedTechElectives = calculateCredits(
+            completedCourses.filter(
               (course) =>
                 !majorPrepCourses.includes(course.classNumber) &&
                 !majorCoreCourses.includes(course.classNumber)
             )
-            .reduce((sum, course) => sum + course.creditHours, 0);
-
-          const totalCompletedCreditHours = completedCourses.reduce(
-            (sum, course) => sum + course.creditHours,
-            0
           );
+  
+          const totalCompletedCreditHours =
+            completedCoreCurriculum +
+            completedElectives +
+            completedMajorPrep +
+            completedMajorCore +
+            completedTechElectives;
+  
+          const totalCreditHours = 135; // Adjust based on your program's total
 
           setDegreeProgress((prev) => {
             const completedCreditHours = 
@@ -111,6 +146,11 @@ const Dashboard = () => {
                 completed: completedCreditHours,
                 remaining: remainingCreditHours,
               },
+              coreCurriculum: {
+                completed: 24,
+                remaining: 42 - 24,
+                total: 42,
+              },
               majorRequirements: {
                 preparatory: {
                   completed: completedMajorPrep,
@@ -127,6 +167,10 @@ const Dashboard = () => {
                   remaining: prev.majorRequirements.technicalElectives.total - completedTechElectives,
                   total: 12,
                 },
+              },  electives: {
+                completed: 7,
+                remaining: 10 - 7,
+                total: 10,
               },
               progressPercentage,
             };
