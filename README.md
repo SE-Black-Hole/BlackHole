@@ -117,3 +117,4 @@ python mixue_bao_test_case_2.py
      - Sorting functionality works for headers (e.g., Course Name, Credit Hours).
      - Classes are accurately categorized as completed or remaining.
      
+# School
